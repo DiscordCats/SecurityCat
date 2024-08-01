@@ -10,7 +10,11 @@
         "strict": true,
         "noImplicitAny": false,
         "outDir": "./dist",
-        "rootDir": "./src"
+        "rootDir": "./"
     },
+    "include": [
+        "src/**/*",
+        "drizzle.config.ts"
+    ],
     "exclude": ["node_modules", "dist"]
 }
