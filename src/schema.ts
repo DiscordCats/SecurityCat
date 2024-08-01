@@ -3,9 +3,11 @@ import {pgTable, serial, varchar, text, json, PgArray, integer} from 'drizzle-or
 export const servers = pgTable('servers', {
     id: text('id').primaryKey(),
     modules: text('modules').array(),
-    extras: integer('extras').references(() => extraRules.id),
-    automod_ids: text('automod_ids').array()
-})
+    automod_ids: text('automod_ids').array(),
+    automod_channel: text('automod_channel').notNull(),
+    extras: integer('extras').references(() => extraRules.id)
+});
+
 
 export const extraRules = pgTable('extra_rules', {
     id: serial('id').primaryKey(),
