@@ -75,9 +75,11 @@ export default async function (client: Client) {
                 const module = rule.name.replace(' Rule', '').toLowerCase();
                 const ruleSet = rules[module];
                 if(!ruleSet) continue;
-                await rule.setAllowList(ruleSet.allowed);
-                await rule.setKeywordFilter(ruleSet.words);
-                await rule.setRegexPatterns(ruleSet.regex);
+                await Promise.allSettled([
+                    rule.setAllowList(ruleSet.allowed),
+                    rule.setKeywordFilter(ruleSet.words),
+                    rule.setRegexPatterns(ruleSet.regex)
+                ])
             }
         }
     });
