@@ -1,24 +1,26 @@
 {
-    "name": "ts-command-handler",
-    "description": "A quick and easy TypeScript command handler for Discord.JS",
-    "scripts": {
-        "start": "tsx src/index.ts",
-        "start:watch": "tsx src/index.ts --watch",
-        "start:shard": "tsc && node dist/shards.js",
-        "build": "tsc"
-    },
-    "devDependencies": {
-        "@types/pg": "^8.11.6",
-        "drizzle-kit": "^0.23.1",
-        "tsx": "^4.7.1",
-        "typescript": "^5.4.3"
-    },
-    "dependencies": {
-        "@hono/node-server": "^1.12.0",
-        "discord.js": "^14.14.1",
-        "dotenv": "^16.4.5",
-        "drizzle-orm": "^0.32.1",
-        "hono": "^4.5.3",
-        "pg": "^8.12.0"
-    }
+  "name": "SecurityCat",
+  "description": "A quick and easy TypeScript command handler for Discord.JS",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "start:watch": "tsx src/index.ts --watch",
+    "start:shard": "tsc && node dist/shards.js",
+    "build": "tsc"
+  },
+  "author": "JayXTQ, RadNotRed",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "@types/pg": "^8.11.6",
+    "drizzle-kit": "^0.23.1",
+    "tsx": "^4.7.1",
+    "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.12.0",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.32.1",
+    "hono": "^4.5.3",
+    "pg": "^8.12.0"
+  }
 }
