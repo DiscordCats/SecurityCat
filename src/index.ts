@@ -1,9 +1,10 @@
-import { readdirSync } from 'fs';
-import { Client, GatewayIntentBits } from 'discord.js';
+import {readdirSync} from 'fs';
+import {Client, GatewayIntentBits} from 'discord.js';
 import dotenv from 'dotenv';
-import { Command } from './types/discord';
-import { Hono } from 'hono'
-import { serve } from '@hono/node-server'
+import {Command} from './types/discord';
+import {Hono} from 'hono';
+import {serve} from '@hono/node-server';
+
 dotenv.config();
 
 if (!process.env.TOKEN) throw Error('You need to provide a token');
@@ -49,15 +50,17 @@ client.login(process.env.TOKEN);
 
 const app = new Hono();
 
-app.get('/', async (c) => {
-    c.text('Hello World!');
+app.get('/', (c) => {
+    return c.text('Hello World!');
 });
 
-app.all('*', async (c, next) => {
-    console.log('New web request');
-    console.log(c.req.method, c.req.url, await c.req.json());
-    await next();
-});
+// unnecessary for functioning webserver
+
+// app.all('*', async (c, next) => {
+//     console.log('New web request');
+//     console.log(c.req.method, c.req.url, await c.req.json());
+//     await next();
+// });
 
 const routeFiles = readdirSync('./src/routes');
 for (const file of routeFiles) {
@@ -69,4 +72,6 @@ for (const file of routeFiles) {
 serve({
     fetch: app.fetch,
     port: +(process.env.PORT || "3000")
-})
+});
+
+console.log('Server running on http://localhost:3000');
