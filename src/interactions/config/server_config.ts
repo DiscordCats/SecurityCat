@@ -6,7 +6,7 @@ import {
     ChatInputCommandInteraction,
     ActionRowBuilder,
     ButtonBuilder,
-    ButtonStyle
+    ButtonStyle, PermissionFlagsBits
 } from 'discord.js';
 import { Command } from '../../types/discord';
 import { db } from '../../db';
@@ -48,6 +48,7 @@ export default {
         }
     ],
     role: 'CHAT_INPUT',
+    default_member_permissions: PermissionFlagsBits.ManageGuild,
     run: async (interaction: ChatInputCommandInteraction) => {
         const subcommand = interaction.options.getSubcommand();
         const moduleName = interaction.options.getString('module');

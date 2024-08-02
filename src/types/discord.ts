@@ -19,7 +19,7 @@ export type Command =
           description: string;
           description_localizations?: Record<string, string>;
           options?: ApplicationCommandOption[];
-          default_member_permissions?: string;
+          default_member_permissions?: bigint;
           nsfw?: boolean;
           integration_types?: number[];
           contexts?: number[];
@@ -31,7 +31,7 @@ export type Command =
           name_localizations?: Record<string, string>;
           description_localizations?: Record<string, string>;
           options?: ApplicationCommandOption[];
-          default_member_permissions?: string;
+          default_member_permissions?: bigint;
           nsfw?: boolean;
           integration_types?: number[];
           contexts?: number[];
@@ -43,7 +43,7 @@ export type Command =
           name_localizations?: Record<string, string>;
           description_localizations?: Record<string, string>;
           options?: ApplicationCommandOption[];
-          default_member_permissions?: string;
+          default_member_permissions?: bigint;
           nsfw?: boolean;
           integration_types?: number[];
           contexts?: number[];

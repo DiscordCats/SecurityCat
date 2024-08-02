@@ -3,7 +3,7 @@ import {
     ChatInputCommandInteraction,
     GuildTextBasedChannel,
     ChannelType,
-    AutoModerationActionType
+    AutoModerationActionType, PermissionFlagsBits
 } from 'discord.js';
 import { Command } from '../../types/discord';
 import { db } from '../../db';
@@ -44,6 +44,7 @@ export default {
         },
     ],
     role: 'CHAT_INPUT',
+    default_member_permissions: PermissionFlagsBits.ManageGuild,
     run: async (interaction: ChatInputCommandInteraction) => {
         const subcommand = interaction.options.getSubcommand();
         const serverId = interaction.guild?.id;
