@@ -2,7 +2,10 @@ import { Client, REST, Routes } from "discord.js";
 import { commands } from "../..";
 import { readdirSync } from "fs";
 import { Command, CommandNoRun } from "../../types/discord";
-import {init} from "../../db";
+import {init, db} from "../../db";
+import {servers} from "../../schema";
+import {fetchGuild} from "../../utils/discord";
+import rules from "../../../rules.json";
 
 export default async function (client: Client) {
     client.on("ready", async () => {
@@ -55,6 +58,28 @@ export default async function (client: Client) {
             `Logged in as ${client.user?.tag}! Loaded ${commands.size} interactions.`,
         );
         await init();
+        const records = await db.select({
+            id: servers.id,
+            modules: servers.modules,
+            ids: servers.automod_ids,
+        }).from(servers)
+        for(const server of records){
+            if(!server.modules) continue;
+            const guild = await fetchGuild(client, server.id);
+            const automodManager = guild?.autoModerationRules
+            if(!automodManager) continue;
+            if(!server.ids) continue;
+            for(const id of server.ids){
+                const rule = await automodManager.fetch(id);
+                if(!rule) continue;
+                const module = rule.name.replace(' Rule', '').toLowerCase();
+                const ruleSet = rules[module];
+                if(!ruleSet) continue;
+                await rule.setAllowList(ruleSet.allowed);
+                await rule.setKeywordFilter(ruleSet.words);
+                await rule.setRegexPatterns(ruleSet.regex);
+            }
+        }
     });
 }
 
