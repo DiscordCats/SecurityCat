@@ -1,4 +1,4 @@
-import {Command} from '../../types/discord';
+import {Command} from '../../../types/discord';
 import {
     ActionRowBuilder,
     ButtonBuilder,
@@ -7,7 +7,7 @@ import {
     EmbedBuilder,
     StringSelectMenuBuilder
 } from 'discord.js';
-import rules from '../../../rules.json';
+import rules from '../../../../rules.json';
 
 export default {
     custom_id: 'approve-report',

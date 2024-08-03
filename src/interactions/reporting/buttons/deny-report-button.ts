@@ -1,4 +1,4 @@
-import {Command} from '../../types/discord';
+import {Command} from '../../../types/discord';
 import {ButtonInteraction, EmbedBuilder} from 'discord.js';
 
 export default {

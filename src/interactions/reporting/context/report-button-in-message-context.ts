@@ -5,7 +5,7 @@ import {
     EmbedBuilder,
     MessageContextMenuCommandInteraction
 } from 'discord.js';
-import {Command} from '../../types/discord';
+import {Command} from '../../../types/discord';
 import dotenv from 'dotenv';
 
 dotenv.config();

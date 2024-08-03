@@ -1,6 +1,6 @@
-import {Command} from '../../types/discord';
+import {Command} from '../../../types/discord';
 import {ActionRowBuilder, EmbedBuilder, ModalSubmitInteraction, StringSelectMenuBuilder} from 'discord.js';
-import rules from '../../../rules.json';
+import rules from '../../../../rules.json';
 
 export default {
     custom_id: 'edit-report-modal',

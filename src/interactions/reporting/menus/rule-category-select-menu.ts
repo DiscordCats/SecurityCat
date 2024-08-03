@@ -1,4 +1,4 @@
-import {Command} from '../../types/discord';
+import {Command} from '../../../types/discord';
 import {EmbedBuilder, StringSelectMenuInteraction} from 'discord.js';
 import {readFileSync, writeFileSync} from 'fs';
 import path from 'path';

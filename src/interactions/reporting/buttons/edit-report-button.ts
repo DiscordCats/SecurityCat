@@ -1,4 +1,4 @@
-import {Command} from '../../types/discord';
+import {Command} from '../../../types/discord';
 import {ActionRowBuilder, ButtonInteraction, ModalBuilder, TextInputBuilder, TextInputStyle} from 'discord.js';
 
 export default {
