@@ -67,6 +67,7 @@ export default async function (client: Client) {
             activities: [
                 {
                     name: `v${pkg.version} | securitycat.app`,
+                    type: ActivityType.Custom
                 }
             ]
         })
