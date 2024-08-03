@@ -66,19 +66,16 @@ export default async function (client: Client) {
         const records = await db.select({
             id: servers.id,
             modules: servers.modules,
-            ids: servers.automod_ids,
         }).from(servers)
         for(const server of records){
             if(!server.modules) continue;
             const guild = await fetchGuild(client, server.id);
             const automodManager = guild?.autoModerationRules
             if(!automodManager) continue;
-            if(!server.ids) continue;
-            for(const id of server.ids){
-                const rule = await automodManager.fetch(id);
+            for(const module of server.modules){
+                const rule = await automodManager.fetch(module.id);
                 if(!rule) continue;
-                const module = rule.name.replace(' Rule', '').toLowerCase();
-                const ruleSet = rules[module];
+                const ruleSet = rules[module.name];
                 if(!ruleSet) continue;
                 await Promise.allSettled([
                     rule.setAllowList(ruleSet.allowed),
