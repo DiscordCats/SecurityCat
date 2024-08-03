@@ -9,40 +9,37 @@ import rules from "../../../rules.json";
 
 export default async function (client: Client) {
     client.on("ready", async () => {
-        const commandFolders = readdirSync('./src/interactions');
+        const commandFiles = readdirSync('./src/interactions', { recursive: true }).filter(file => !(file instanceof Buffer) && file.endsWith('.ts'));
         const loadedCommands: CommandNoRun[] = [];
-        for (const folder of commandFolders) {
-            const interactions = readdirSync(`./src/interactions/${folder}`);
-            for (const interaction of interactions) {
-                const command = (
-                    await import(`../../interactions/${folder}/${interaction}`)
-                ).default as Command & { type?: number };
-                if (
-                    commands.get(
-                        'name' in command ? command.name : command.custom_id,
-                    )
-                )
-                    throw Error(
-                        `Duplicate command name or custom_id (${interaction})`,
-                    );
-                commands.set(
+        for (const file of commandFiles) {
+            const command = (
+                await import(`../../interactions/${file}`)
+            ).default as Command & { type?: number };
+            if (
+                commands.get(
                     'name' in command ? command.name : command.custom_id,
-                    command as Command,
+                )
+            )
+                throw Error(
+                    `Duplicate command name or custom_id (${file})`,
                 );
-                if ('name' in command && command.role !== 'AUTOCOMPLETE') {
-                    if (command.role !== 'CHAT_INPUT')
-                        command.type =
-                            command.role === 'MESSAGE_CONTEXT_MENU' ? 3 : 2;
-                    const { run, default_member_permissions, ...rest } =
-                        command;
-                    const add: CommandNoRun & {
-                        default_member_permissions?: string;
-                    } = rest;
-                    if (default_member_permissions)
-                        add.default_member_permissions =
-                            default_member_permissions.toString();
-                    loadedCommands.push(add);
-                }
+            commands.set(
+                'name' in command ? command.name : command.custom_id,
+                command as Command,
+            );
+            if ('name' in command && command.role !== 'AUTOCOMPLETE') {
+                if (command.role !== 'CHAT_INPUT')
+                    command.type =
+                        command.role === 'MESSAGE_CONTEXT_MENU' ? 3 : 2;
+                const { run, default_member_permissions, ...rest } =
+                    command;
+                const add: CommandNoRun & {
+                    default_member_permissions?: string;
+                } = rest;
+                if (default_member_permissions)
+                    add.default_member_permissions =
+                        default_member_permissions.toString();
+                loadedCommands.push(add);
             }
         }
         const rest = new REST({ version: '10' }).setToken(
