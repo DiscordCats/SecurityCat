@@ -1,13 +1,18 @@
 import {Command} from '../../types/discord';
-import {ButtonInteraction} from 'discord.js';
+import {ButtonInteraction, EmbedBuilder} from 'discord.js';
 
 export default {
     custom_id: 'deny-report',
     role: 'BUTTON',
     run: async (interaction: ButtonInteraction) => {
         try {
+            const denyEmbed = new EmbedBuilder()
+                .setTitle('Denied')
+                .setDescription('Report denied.')
+                .setColor('Red');
+
             await interaction.reply({
-                content: 'Report denied.',
+                embeds: [denyEmbed],
                 ephemeral: true
             });
 

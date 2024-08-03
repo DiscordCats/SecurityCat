@@ -1,5 +1,5 @@
 import {Command} from '../../types/discord';
-import {ActionRowBuilder, ModalSubmitInteraction, StringSelectMenuBuilder} from 'discord.js';
+import {ActionRowBuilder, EmbedBuilder, ModalSubmitInteraction, StringSelectMenuBuilder} from 'discord.js';
 import rules from '../../../rules.json';
 
 export default {
@@ -7,8 +7,6 @@ export default {
     role: 'MODAL_SUBMIT',
     run: async (interaction: ModalSubmitInteraction) => {
         const editedContent = interaction.fields.getTextInputValue('report-input');
-
-        await interaction.reply({content: `Edited report: ${editedContent}`, ephemeral: true});
 
         const selectMenu = new StringSelectMenuBuilder()
             .setCustomId('rule-category-select')
@@ -22,8 +20,14 @@ export default {
 
         const row = new ActionRowBuilder<StringSelectMenuBuilder>().setComponents(selectMenu);
 
-        await interaction.followUp({
-            content: `Select a category to add the edited content: "${editedContent}"`,
+        const embed = new EmbedBuilder()
+            .setTitle('Edit Report')
+            .setDescription('Select a rules category to add the edited content')
+            .addFields({name: 'Edited Content', value: editedContent})
+            .setColor('Yellow');
+
+        await interaction.reply({
+            embeds: [embed],
             components: [row],
             ephemeral: true
         });

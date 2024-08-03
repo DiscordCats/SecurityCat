@@ -18,7 +18,15 @@ export default {
     role: 'MESSAGE_CONTEXT_MENU',
     run: async (interaction: MessageContextMenuCommandInteraction) => {
         if (!reportGuildId || !reportChannelId) {
-            return interaction.reply({content: 'Reporting is not configured properly.', ephemeral: true});
+            const errorEmbed = new EmbedBuilder()
+                .setTitle('Error')
+                .setDescription('Reporting is not configured properly.')
+                .setColor('Red');
+
+            return interaction.reply({
+                embeds: [errorEmbed],
+                ephemeral: true
+            });
         }
 
         const message = await interaction.targetMessage.fetch();
@@ -34,6 +42,7 @@ export default {
                 {name: 'Message Content', value: reportedContent},
                 {name: 'Author', value: `${reportedAuthor.tag} (${reportedAuthor.id})`}
             )
+            .setColor('Red')
             .setTimestamp();
 
         const approveButton = new ButtonBuilder()
@@ -53,17 +62,40 @@ export default {
             const reportChannel = await reportGuild.channels.fetch(reportChannelId);
 
             if (!reportChannel?.isTextBased()) {
+                const errorEmbed = new EmbedBuilder()
+                    .setTitle('Error')
+                    .setDescription('Configured report channel is not a text channel.')
+                    .setColor('Red');
+
                 return interaction.reply({
-                    content: 'Configured report channel is not a text channel.',
+                    embeds: [errorEmbed],
                     ephemeral: true
                 });
             }
 
             await reportChannel.send({embeds: [reportEmbed], components: [row]});
-            await interaction.reply({content: 'Message reported successfully.', ephemeral: true});
+
+            const successEmbed = new EmbedBuilder()
+                .setTitle('Success')
+                .setDescription('Message reported successfully.')
+                .setColor('Green');
+
+            await interaction.reply({
+                embeds: [successEmbed],
+                ephemeral: true
+            });
         } catch (error) {
             console.error('Error sending report:', error);
-            await interaction.reply({content: 'There was an error reporting the message.', ephemeral: true});
+
+            const errorEmbed = new EmbedBuilder()
+                .setTitle('Error')
+                .setDescription('There was an error reporting the message.')
+                .setColor('Red');
+
+            await interaction.reply({
+                embeds: [errorEmbed],
+                ephemeral: true
+            });
         }
     },
 } satisfies Command;
