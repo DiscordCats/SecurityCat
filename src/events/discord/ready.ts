@@ -1,29 +1,28 @@
-import { Client, REST, Routes, ActivityType } from "discord.js";
-import { commands } from "../..";
-import { readdirSync } from "fs";
-import { Command, CommandNoRun } from "../../types/discord";
-import {init, db} from "../../db";
-import {servers} from "../../schema";
-import {fetchGuild} from "../../utils/discord";
-import rules from "../../../rules.json";
-import pkg from "../../../package.json";
+import { Client, REST, Routes, ActivityType } from 'discord.js';
+import { commands } from '../..';
+import { readdirSync } from 'fs';
+import { Command, CommandNoRun } from '../../types/discord';
+import { init, db } from '../../db';
+import { servers } from '../../schema';
+import { fetchGuild } from '../../utils/discord';
+import rules from '../../../rules.json';
+import pkg from '../../../package.json';
 
 export default async function (client: Client) {
-    client.on("ready", async () => {
-        const commandFiles = readdirSync('./src/interactions', { recursive: true }).filter(file => !(file instanceof Buffer) && file.endsWith('.ts'));
+    client.on('ready', async () => {
+        const commandFiles = readdirSync('./src/interactions', {
+            recursive: true,
+        }).filter((file) => !(file instanceof Buffer) && file.endsWith('.ts'));
         const loadedCommands: CommandNoRun[] = [];
         for (const file of commandFiles) {
-            const command = (
-                await import(`../../interactions/${file}`)
-            ).default as Command & { type?: number };
+            const command = (await import(`../../interactions/${file}`))
+                .default as Command & { type?: number };
             if (
                 commands.get(
                     'name' in command ? command.name : command.custom_id,
                 )
             )
-                throw Error(
-                    `Duplicate command name or custom_id (${file})`,
-                );
+                throw Error(`Duplicate command name or custom_id (${file})`);
             commands.set(
                 'name' in command ? command.name : command.custom_id,
                 command as Command,
@@ -32,8 +31,7 @@ export default async function (client: Client) {
                 if (command.role !== 'CHAT_INPUT')
                     command.type =
                         command.role === 'MESSAGE_CONTEXT_MENU' ? 3 : 2;
-                const { run, default_member_permissions, ...rest } =
-                    command;
+                const { run, default_member_permissions, ...rest } = command;
                 const add: CommandNoRun & {
                     default_member_permissions?: string;
                 } = rest;
@@ -67,30 +65,32 @@ export default async function (client: Client) {
             activities: [
                 {
                     name: `v${pkg.version} | securitycat.app`,
-                    type: ActivityType.Custom
-                }
-            ]
-        })
+                    type: ActivityType.Custom,
+                },
+            ],
+        });
         await init();
-        const records = await db.select({
-            id: servers.id,
-            modules: servers.modules,
-        }).from(servers)
-        for(const server of records){
-            if(!server.modules) continue;
+        const records = await db
+            .select({
+                id: servers.id,
+                modules: servers.modules,
+            })
+            .from(servers);
+        for (const server of records) {
+            if (!server.modules) continue;
             const guild = await fetchGuild(client, server.id);
-            const automodManager = guild?.autoModerationRules
-            if(!automodManager) continue;
-            for(const module of server.modules){
+            const automodManager = guild?.autoModerationRules;
+            if (!automodManager) continue;
+            for (const module of server.modules) {
                 const rule = await automodManager.fetch(module.id);
-                if(!rule) continue;
+                if (!rule) continue;
                 const ruleSet = rules[module.name];
-                if(!ruleSet) continue;
+                if (!ruleSet) continue;
                 await Promise.allSettled([
                     rule.setAllowList(ruleSet.allowed),
                     rule.setKeywordFilter(ruleSet.words),
-                    rule.setRegexPatterns(ruleSet.regex)
-                ])
+                    rule.setRegexPatterns(ruleSet.regex),
+                ]);
             }
         }
     });
@@ -137,5 +137,5 @@ const isDeepEqual = (
 };
 
 const isObject = (object: unknown) => {
-    return object != null && typeof object === "object";
+    return object != null && typeof object === 'object';
 };

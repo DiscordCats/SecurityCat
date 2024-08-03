@@ -1,5 +1,11 @@
-import {Command} from '../../../types/discord';
-import {ActionRowBuilder, ButtonInteraction, ModalBuilder, TextInputBuilder, TextInputStyle} from 'discord.js';
+import { Command } from '../../../types/discord';
+import {
+    ActionRowBuilder,
+    ButtonInteraction,
+    ModalBuilder,
+    TextInputBuilder,
+    TextInputStyle,
+} from 'discord.js';
 
 export default {
     custom_id: 'edit-report',
@@ -15,7 +21,8 @@ export default {
             .setStyle(TextInputStyle.Paragraph)
             .setRequired(true);
 
-        const actionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(reportInput);
+        const actionRow =
+            new ActionRowBuilder<TextInputBuilder>().addComponents(reportInput);
 
         modal.addComponents(actionRow);
 

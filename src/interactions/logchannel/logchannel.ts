@@ -3,7 +3,8 @@ import {
     ChatInputCommandInteraction,
     GuildTextBasedChannel,
     ChannelType,
-    AutoModerationActionType, PermissionFlagsBits
+    AutoModerationActionType,
+    PermissionFlagsBits,
 } from 'discord.js';
 import { Command } from '../../types/discord';
 import { db } from '../../db';
@@ -24,8 +25,11 @@ export default {
                     name: 'channel',
                     description: 'The channel to set for auto-moderation logs',
                     required: true,
-                    channelTypes: [ChannelType.GuildText, ChannelType.GuildAnnouncement]
-                }
+                    channelTypes: [
+                        ChannelType.GuildText,
+                        ChannelType.GuildAnnouncement,
+                    ],
+                },
             ],
         },
         {
@@ -36,10 +40,14 @@ export default {
                 {
                     type: ApplicationCommandOptionType.Channel,
                     name: 'new_channel',
-                    description: 'The new channel to set for auto-moderation logs',
+                    description:
+                        'The new channel to set for auto-moderation logs',
                     required: true,
-                    channelTypes: [ChannelType.GuildText, ChannelType.GuildAnnouncement]
-                }
+                    channelTypes: [
+                        ChannelType.GuildText,
+                        ChannelType.GuildAnnouncement,
+                    ],
+                },
             ],
         },
     ],
@@ -50,7 +58,10 @@ export default {
         const serverId = interaction.guild?.id;
 
         if (!serverId) {
-            return interaction.reply({ content: 'Unable to determine server ID.', ephemeral: true });
+            return interaction.reply({
+                content: 'Unable to determine server ID.',
+                ephemeral: true,
+            });
         }
 
         let serverRecord = await db
@@ -58,27 +69,34 @@ export default {
             .from(servers)
             .where(eq(servers.id, serverId))
             .execute()
-            .then(res => res[0]);
+            .then((res) => res[0]);
 
         if (subcommand === 'set') {
-            const channel = interaction.options.getChannel('channel') as GuildTextBasedChannel;
+            const channel = interaction.options.getChannel(
+                'channel',
+            ) as GuildTextBasedChannel;
 
             if (!channel) {
-                return interaction.reply({ content: 'Invalid channel specified.', ephemeral: true });
+                return interaction.reply({
+                    content: 'Invalid channel specified.',
+                    ephemeral: true,
+                });
             }
 
             if (!serverRecord) {
-                await db.insert(servers)
+                await db
+                    .insert(servers)
                     .values({
                         id: serverId,
                         automod_channel: channel.id,
                         modules: [],
                         automod_ids: [],
-                        extras: null
+                        extras: null,
                     })
                     .execute();
             } else {
-                await db.update(servers)
+                await db
+                    .update(servers)
                     .set({ automod_channel: channel.id })
                     .where(eq(servers.id, serverId))
                     .execute();
@@ -91,18 +109,21 @@ export default {
                         const rule = await autoModManager.fetch(ruleId);
                         const existingActions = rule.actions;
 
-                        const newActions = existingActions.map(action => {
-                            if (action.type === AutoModerationActionType.SendAlertMessage) {
+                        const newActions = existingActions.map((action) => {
+                            if (
+                                action.type ===
+                                AutoModerationActionType.SendAlertMessage
+                            ) {
                                 return {
                                     ...action,
-                                    metadata: { channel: channel.id }
+                                    metadata: { channel: channel.id },
                                 };
                             }
                             return action;
                         });
 
                         await rule.edit({
-                            actions: newActions
+                            actions: newActions,
                         });
                     } catch (err) {
                         console.error(`Error updating rule ${ruleId}:`, err);
@@ -110,19 +131,31 @@ export default {
                 }
             }
 
-            return interaction.reply(`Auto-moderation log channel set to ${channel.name}.`);
+            return interaction.reply(
+                `Auto-moderation log channel set to ${channel.name}.`,
+            );
         } else if (subcommand === 'edit') {
             if (!serverRecord) {
-                return interaction.reply({ content: 'No server record found. Please set a log channel first.', ephemeral: true });
+                return interaction.reply({
+                    content:
+                        'No server record found. Please set a log channel first.',
+                    ephemeral: true,
+                });
             }
 
-            const newChannel = interaction.options.getChannel('new_channel') as GuildTextBasedChannel;
+            const newChannel = interaction.options.getChannel(
+                'new_channel',
+            ) as GuildTextBasedChannel;
 
             if (!newChannel) {
-                return interaction.reply({ content: 'Invalid channel specified.', ephemeral: true });
+                return interaction.reply({
+                    content: 'Invalid channel specified.',
+                    ephemeral: true,
+                });
             }
 
-            await db.update(servers)
+            await db
+                .update(servers)
                 .set({ automod_channel: newChannel.id })
                 .where(eq(servers.id, serverId))
                 .execute();
@@ -134,18 +167,21 @@ export default {
                         const rule = await autoModManager.fetch(ruleId);
                         const existingActions = rule.actions;
 
-                        const newActions = existingActions.map(action => {
-                            if (action.type === AutoModerationActionType.SendAlertMessage) {
+                        const newActions = existingActions.map((action) => {
+                            if (
+                                action.type ===
+                                AutoModerationActionType.SendAlertMessage
+                            ) {
                                 return {
                                     ...action,
-                                    metadata: { channel: newChannel.id }
+                                    metadata: { channel: newChannel.id },
                                 };
                             }
                             return action;
                         });
 
                         await rule.edit({
-                            actions: newActions
+                            actions: newActions,
                         });
                     } catch (err) {
                         console.error(`Error updating rule ${ruleId}:`, err);
@@ -153,7 +189,9 @@ export default {
                 }
             }
 
-            return interaction.reply(`Auto-moderation log channel updated to ${newChannel.name}.`);
+            return interaction.reply(
+                `Auto-moderation log channel updated to ${newChannel.name}.`,
+            );
         }
-    }
+    },
 } satisfies Command;

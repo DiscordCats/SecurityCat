@@ -3,9 +3,9 @@ import {
     ButtonBuilder,
     ButtonStyle,
     EmbedBuilder,
-    MessageContextMenuCommandInteraction
+    MessageContextMenuCommandInteraction,
 } from 'discord.js';
-import {Command} from '../../../types/discord';
+import { Command } from '../../../types/discord';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -25,7 +25,7 @@ export default {
 
             return interaction.reply({
                 embeds: [errorEmbed],
-                ephemeral: true
+                ephemeral: true,
             });
         }
 
@@ -38,9 +38,15 @@ export default {
             .setTitle('Message Report')
             .setDescription(`A message has been reported.`)
             .addFields(
-                {name: 'Reported by', value: `${reporter.tag} (${reporter.id})`},
-                {name: 'Message Content', value: reportedContent},
-                {name: 'Author', value: `${reportedAuthor.tag} (${reportedAuthor.id})`}
+                {
+                    name: 'Reported by',
+                    value: `${reporter.tag} (${reporter.id})`,
+                },
+                { name: 'Message Content', value: reportedContent },
+                {
+                    name: 'Author',
+                    value: `${reportedAuthor.tag} (${reportedAuthor.id})`,
+                },
             )
             .setColor('Red')
             .setTimestamp();
@@ -55,25 +61,35 @@ export default {
             .setLabel('Deny')
             .setStyle(ButtonStyle.Danger);
 
-        const row = new ActionRowBuilder<ButtonBuilder>().setComponents(approveButton, denyButton);
+        const row = new ActionRowBuilder<ButtonBuilder>().setComponents(
+            approveButton,
+            denyButton,
+        );
 
         try {
-            const reportGuild = await interaction.client.guilds.fetch(reportGuildId);
-            const reportChannel = await reportGuild.channels.fetch(reportChannelId);
+            const reportGuild =
+                await interaction.client.guilds.fetch(reportGuildId);
+            const reportChannel =
+                await reportGuild.channels.fetch(reportChannelId);
 
             if (!reportChannel?.isTextBased()) {
                 const errorEmbed = new EmbedBuilder()
                     .setTitle('Error')
-                    .setDescription('Configured report channel is not a text channel.')
+                    .setDescription(
+                        'Configured report channel is not a text channel.',
+                    )
                     .setColor('Red');
 
                 return interaction.reply({
                     embeds: [errorEmbed],
-                    ephemeral: true
+                    ephemeral: true,
                 });
             }
 
-            await reportChannel.send({embeds: [reportEmbed], components: [row]});
+            await reportChannel.send({
+                embeds: [reportEmbed],
+                components: [row],
+            });
 
             const successEmbed = new EmbedBuilder()
                 .setTitle('Success')
@@ -82,7 +98,7 @@ export default {
 
             await interaction.reply({
                 embeds: [successEmbed],
-                ephemeral: true
+                ephemeral: true,
             });
         } catch (error) {
             console.error('Error sending report:', error);
@@ -94,7 +110,7 @@ export default {
 
             await interaction.reply({
                 embeds: [errorEmbed],
-                ephemeral: true
+                ephemeral: true,
             });
         }
     },

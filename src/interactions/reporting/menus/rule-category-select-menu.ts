@@ -1,6 +1,6 @@
-import {Command} from '../../../types/discord';
-import {EmbedBuilder, StringSelectMenuInteraction} from 'discord.js';
-import {readFileSync, writeFileSync} from 'fs';
+import { Command } from '../../../types/discord';
+import { EmbedBuilder, StringSelectMenuInteraction } from 'discord.js';
+import { readFileSync, writeFileSync } from 'fs';
 import path from 'path';
 
 export default {
@@ -9,9 +9,13 @@ export default {
     run: async (interaction: StringSelectMenuInteraction) => {
         const selectedCategory = interaction.values[0];
 
-        const originalContent = interaction.message.embeds[0]?.fields.find(field => field.name === 'Message Content')?.value;
+        const originalContent = interaction.message.embeds[0]?.fields.find(
+            (field) => field.name === 'Message Content',
+        )?.value;
 
-        const editedContent = interaction.message.embeds[0]?.fields.find(field => field.name === 'Edited Content')?.value;
+        const editedContent = interaction.message.embeds[0]?.fields.find(
+            (field) => field.name === 'Edited Content',
+        )?.value;
 
         const contentToAdd = editedContent || originalContent;
 
@@ -23,7 +27,7 @@ export default {
 
             return interaction.reply({
                 embeds: [errorEmbed],
-                ephemeral: true
+                ephemeral: true,
             });
         }
 
@@ -31,7 +35,7 @@ export default {
         const rules = JSON.parse(readFileSync(rulesPath, 'utf-8'));
 
         if (!rules[selectedCategory]) {
-            rules[selectedCategory] = {words: [], regex: [], allowed: []};
+            rules[selectedCategory] = { words: [], regex: [], allowed: [] };
         }
 
         rules[selectedCategory].words.push(contentToAdd);
@@ -41,10 +45,12 @@ export default {
             embeds: [
                 new EmbedBuilder()
                     .setTitle('Rule Updated')
-                    .setDescription(`Message added to ${selectedCategory} rules.`)
-                    .setColor('Green')
+                    .setDescription(
+                        `Message added to ${selectedCategory} rules.`,
+                    )
+                    .setColor('Green'),
             ],
-            ephemeral: true
+            ephemeral: true,
         });
     },
 } satisfies Command;

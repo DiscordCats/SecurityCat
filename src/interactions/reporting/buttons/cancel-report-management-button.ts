@@ -1,5 +1,5 @@
-import {Command} from '../../../types/discord';
-import {ButtonInteraction, EmbedBuilder} from 'discord.js';
+import { Command } from '../../../types/discord';
+import { ButtonInteraction, EmbedBuilder } from 'discord.js';
 
 export default {
     custom_id: 'cancel-report',
@@ -12,7 +12,7 @@ export default {
 
         await interaction.reply({
             embeds: [cancelEmbed],
-            ephemeral: true
+            ephemeral: true,
         });
     },
 } satisfies Command;

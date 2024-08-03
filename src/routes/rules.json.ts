@@ -1,6 +1,6 @@
-import {Client} from 'discord.js';
-import {Hono} from 'hono';
-import {readFileSync} from 'fs';
+import { Client } from 'discord.js';
+import { Hono } from 'hono';
+import { readFileSync } from 'fs';
 
 export default function (app: Hono, client: Client) {
     app.get('/rules.json', async (c) => {

@@ -1,5 +1,5 @@
-import {Command} from '../../../types/discord';
-import {ButtonInteraction, EmbedBuilder} from 'discord.js';
+import { Command } from '../../../types/discord';
+import { ButtonInteraction, EmbedBuilder } from 'discord.js';
 
 export default {
     custom_id: 'deny-report',
@@ -13,7 +13,7 @@ export default {
 
             await interaction.reply({
                 embeds: [denyEmbed],
-                ephemeral: true
+                ephemeral: true,
             });
 
             await interaction.message.delete();

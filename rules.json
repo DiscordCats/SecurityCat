@@ -25,16 +25,66 @@
             "*steamcommunjlnty.com/*",
             "*TikTokNudes_bot*"
         ],
-        "regex": ["\\[.*steamcommunity.*\\]\\(.*\\)", "\\[.*discord\\.com\\/gift.*\\]\\(.*\\)", "Steam Gift \\d+(?:\\$|£|€)", "(?:\\$|£|€)+\\d gift"],
+        "regex": [
+            "\\[.*steamcommunity.*\\]\\(.*\\)",
+            "\\[.*discord\\.com\\/gift.*\\]\\(.*\\)",
+            "Steam Gift \\d+(?:\\$|£|€)",
+            "(?:\\$|£|€)+\\d gift"
+        ],
         "allowed": []
     },
     "invites": {
-        "words": ["*discord.com/invite/*", "*discord.gg/*", "*dsc.gg/*", "t.me/*", "discord.beer/*", "t.ly/*", "dus.im/*"],
+        "words": [
+            "*discord.com/invite/*",
+            "*discord.gg/*",
+            "*dsc.gg/*",
+            "t.me/*",
+            "discord.beer/*",
+            "t.ly/*",
+            "dus.im/*"
+        ],
         "regex": [],
         "allowed": []
     },
     "\"brainrot\"": {
-        "words": ["\uD83D\uDC3A", "\uD83D\uDC45", "baby gronk", "*cenat*", "fanum", "*\uD835\uDCEF\uD835\uDCFB\uD835\uDCEE\uD835\uDCEA\uD835\uDCF4*", "freaky", "*g yat*", "*goyat*", "*gronk*", "guyatt", "gyat*", "ice spice", "mewing", "mog*", "*rizzler*", "s1gm@", "SÆgma", "Segma", "*sigma*", "*sigmer*", "sigmest", "sigmon", "*simga*", "SITMA", "skbidi", "skibdi", "skibi", "skibiddy", "*skibidi*", "*skibiditoilet*", "skibidy", "*skibiti*", "skidi", "*SΚIBIDI*", "wattestigma"],
+        "words": [
+            "\uD83D\uDC3A",
+            "\uD83D\uDC45",
+            "baby gronk",
+            "*cenat*",
+            "fanum",
+            "*\uD835\uDCEF\uD835\uDCFB\uD835\uDCEE\uD835\uDCEA\uD835\uDCF4*",
+            "freaky",
+            "*g yat*",
+            "*goyat*",
+            "*gronk*",
+            "guyatt",
+            "gyat*",
+            "ice spice",
+            "mewing",
+            "mog*",
+            "*rizzler*",
+            "s1gm@",
+            "SÆgma",
+            "Segma",
+            "*sigma*",
+            "*sigmer*",
+            "sigmest",
+            "sigmon",
+            "*simga*",
+            "SITMA",
+            "skbidi",
+            "skibdi",
+            "skibi",
+            "skibiddy",
+            "*skibidi*",
+            "*skibiditoilet*",
+            "skibidy",
+            "*skibiti*",
+            "skidi",
+            "*SΚIBIDI*",
+            "wattestigma"
+        ],
         "regex": ["\\u2000-\\u200A\\u2028\\u2029\\u205F\\u3000"],
         "allowed": []
     }

@@ -1,9 +1,9 @@
-import {readdirSync} from 'fs';
-import {Client, GatewayIntentBits} from 'discord.js';
+import { readdirSync } from 'fs';
+import { Client, GatewayIntentBits } from 'discord.js';
 import dotenv from 'dotenv';
-import {Command} from './types/discord';
-import {Hono} from 'hono';
-import {serve} from '@hono/node-server';
+import { Command } from './types/discord';
+import { Hono } from 'hono';
+import { serve } from '@hono/node-server';
 
 dotenv.config();
 
@@ -69,9 +69,11 @@ for (const file of routeFiles) {
     });
 }
 
+const port = +(process.env.PORT || '3000');
+
 serve({
     fetch: app.fetch,
-    port: +(process.env.PORT || "3000")
+    port,
 });
 
-console.log('Server running on http://localhost:3000');
+console.log(`Server running on http://localhost:${port}`);
