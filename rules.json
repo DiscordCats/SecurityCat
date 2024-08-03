@@ -28,7 +28,7 @@
         "allowed": []
     },
     "invites": {
-        "words": ["*discord.com/invite/*", "*discord.gg/*", "*discord.io/*", "*dsc.gg/*"],
+        "words": ["*discord.com/invite/*", "*discord.gg/*", "*discord.io/*", "*dsc.gg/*", "t.me/*"],
         "regex": [],
         "allowed": []
     },
