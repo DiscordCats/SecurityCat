@@ -1,6 +1,6 @@
 {
   "name": "SecurityCat",
-  "description": "A quick and easy TypeScript command handler for Discord.JS",
+  "version": "0.0.1",
   "scripts": {
     "start": "tsx src/index.ts",
     "start:watch": "tsx src/index.ts --watch",

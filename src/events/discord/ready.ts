@@ -1,4 +1,4 @@
-import { Client, REST, Routes } from "discord.js";
+import { Client, REST, Routes, ActivityType } from "discord.js";
 import { commands } from "../..";
 import { readdirSync } from "fs";
 import { Command, CommandNoRun } from "../../types/discord";
@@ -6,6 +6,7 @@ import {init, db} from "../../db";
 import {servers} from "../../schema";
 import {fetchGuild} from "../../utils/discord";
 import rules from "../../../rules.json";
+import pkg from "../../../package.json";
 
 export default async function (client: Client) {
     client.on("ready", async () => {
@@ -62,6 +63,13 @@ export default async function (client: Client) {
         console.log(
             `Logged in as ${client.user?.tag}! Loaded ${commands.size} interactions.`,
         );
+        await client.user?.setPresence({
+            activities: [
+                {
+                    name: `v${pkg.version} | securitycat.app`,
+                }
+            ]
+        })
         await init();
         const records = await db.select({
             id: servers.id,
