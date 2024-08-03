@@ -63,7 +63,7 @@ export default async function (client: Client) {
         console.log(
             `Logged in as ${client.user?.tag}! Loaded ${commands.size} interactions.`,
         );
-        await client.user?.setPresence({
+        client.user?.setPresence({
             activities: [
                 {
                     name: `v${pkg.version} | securitycat.app`,
