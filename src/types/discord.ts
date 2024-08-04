@@ -7,7 +7,6 @@ import type {
     MessageContextMenuCommandInteraction,
     ModalSubmitInteraction,
     UserContextMenuCommandInteraction,
-    StringSelectMenuInteraction,
 } from 'discord.js';
 
 export type Command =
@@ -51,7 +50,7 @@ export type Command =
     | {
           role: 'SELECT_MENU';
           custom_id: string;
-          run: (interaction: StringSelectMenuInteraction) => unknown;
+          run: (interaction: AnySelectMenuInteraction) => unknown;
       }
     | {
           role: 'BUTTON';

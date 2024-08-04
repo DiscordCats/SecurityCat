@@ -1,12 +1,12 @@
 import { Command } from '../../../types/discord';
-import { EmbedBuilder, StringSelectMenuInteraction } from 'discord.js';
+import { AnySelectMenuInteraction, EmbedBuilder } from 'discord.js';
 import { readFileSync, writeFileSync } from 'fs';
 import path from 'path';
 
 export default {
     custom_id: 'rule-category-select',
     role: 'SELECT_MENU',
-    run: async (interaction: StringSelectMenuInteraction) => {
+    run: async (interaction: AnySelectMenuInteraction) => {
         const selectedCategory = interaction.values[0];
 
         const originalContent = interaction.message.embeds[0]?.fields.find(
@@ -31,7 +31,7 @@ export default {
             });
         }
 
-        const rulesPath = path.resolve(__dirname, '../../../rules.json');
+        const rulesPath = path.resolve(__dirname, '../../../../rules.json');
         const rules = JSON.parse(readFileSync(rulesPath, 'utf-8'));
 
         if (!rules[selectedCategory]) {
