@@ -9,7 +9,7 @@ dotenv.config();
 
 if (!process.env.TOKEN) throw Error('You need to provide a token');
 
-const client = new Client({
+export const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.MessageContent,
