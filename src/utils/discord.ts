@@ -23,6 +23,22 @@ export async function fetchGuildMember(
     );
 }
 
+export async function fetchChannel(client: Client, channelId: string) {
+    return (
+        client.channels.cache.get(channelId) ||
+        (await client.channels.fetch(channelId).catch(() => null))
+    );
+}
+
+export async function fetchGuildChannel(client: Client, guildId: string, channelId: string) {
+    const guild = await fetchGuild(client, guildId);
+    if (!guild) return null;
+    return (
+        guild.channels.cache.get(channelId) ||
+        (await guild.channels.fetch(channelId).catch(() => null))
+    );
+}
+
 export async function authenticate(c: Context) {
     const serverId = new URL(c.req.url).searchParams.get('serverId');
     const token = c.req.header('Authorization');
