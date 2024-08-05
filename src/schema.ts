@@ -1,4 +1,4 @@
-import {boolean, jsonb, pgTable, serial, text} from 'drizzle-orm/pg-core';
+import { boolean, jsonb, pgTable, serial, text } from 'drizzle-orm/pg-core';
 
 export type Modules = {
     enabled: boolean; // whether the module is enabled
@@ -28,10 +28,13 @@ export const modules = pgTable('modules', {
     amId: text('am_id'),
     log: text('log'),
     duration: text('duration'),
-    bypass: jsonb('bypass').$type<{
-        words: string[];
-        roles: string[];
-        channels: string[];
-    }>().default({ words: [], roles: [], channels: [] }).notNull(),
+    bypass: jsonb('bypass')
+        .$type<{
+            words: string[];
+            roles: string[];
+            channels: string[];
+        }>()
+        .default({ words: [], roles: [], channels: [] })
+        .notNull(),
     blockMessageEnabled: boolean('block_message_enabled').notNull(),
-})
+});

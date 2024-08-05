@@ -82,7 +82,7 @@ export default async function (client: Client) {
             const automodManager = guild?.autoModerationRules;
             if (!automodManager) continue;
             for (const module of server.modules) {
-                if(!module.id) continue;
+                if (!module.id) continue;
                 const rule = await automodManager.fetch(module.id);
                 if (!rule) continue;
                 const ruleSet = rules[module.name];

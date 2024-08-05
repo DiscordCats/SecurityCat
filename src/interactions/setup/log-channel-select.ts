@@ -67,7 +67,7 @@ export default {
                     console.log(
                         `Fetching rule for module ${mod.name} with ID ${mod.id}`,
                     );
-                    if(!mod.id) continue;
+                    if (!mod.id) continue;
                     const rule = await autoModManager.fetch(mod.id);
                     if (rule) {
                         console.log(

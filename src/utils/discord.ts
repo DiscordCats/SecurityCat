@@ -30,7 +30,11 @@ export async function fetchChannel(client: Client, channelId: string) {
     );
 }
 
-export async function fetchGuildChannel(client: Client, guildId: string, channelId: string) {
+export async function fetchGuildChannel(
+    client: Client,
+    guildId: string,
+    channelId: string,
+) {
     const guild = await fetchGuild(client, guildId);
     if (!guild) return null;
     return (

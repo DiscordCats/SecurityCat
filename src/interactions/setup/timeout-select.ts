@@ -1,8 +1,8 @@
-import {AnySelectMenuInteraction, AutoModerationActionType} from 'discord.js';
-import {Command} from '../../types/discord';
-import {db} from '../../db';
-import {servers} from '../../schema';
-import {eq} from 'drizzle-orm';
+import { AnySelectMenuInteraction, AutoModerationActionType } from 'discord.js';
+import { Command } from '../../types/discord';
+import { db } from '../../db';
+import { servers } from '../../schema';
+import { eq } from 'drizzle-orm';
 
 export default {
     custom_id: 'timeout-select',
@@ -51,7 +51,7 @@ export default {
                         timeoutActionExists = true;
                         return {
                             type: AutoModerationActionType.Timeout,
-                            metadata: {durationSeconds: duration},
+                            metadata: { durationSeconds: duration },
                         };
                     }
                     return action;
@@ -60,21 +60,21 @@ export default {
                 if (!timeoutActionExists) {
                     newActions.push({
                         type: AutoModerationActionType.Timeout,
-                        metadata: {durationSeconds: duration},
+                        metadata: { durationSeconds: duration },
                     });
                 }
 
                 console.log(
                     `Passing data to discord: ${JSON.stringify(newActions, null, 2)}`,
                 );
-                await rule.edit({actions: newActions});
+                await rule.edit({ actions: newActions });
 
                 await db
                     .update(servers)
                     .set({
                         modules: serverRecord.modules.map((mod) =>
                             mod.id === module.id
-                                ? {...mod, duration: String(duration)}
+                                ? { ...mod, duration: String(duration) }
                                 : mod,
                         ),
                     })

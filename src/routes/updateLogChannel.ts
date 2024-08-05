@@ -5,7 +5,7 @@ import {
     AutoModerationActionMetadataOptions,
 } from 'discord.js';
 import { Hono } from 'hono';
-import {authenticate, fetchGuild, fetchGuildChannel} from '../utils/discord';
+import { authenticate, fetchGuild, fetchGuildChannel } from '../utils/discord';
 import { db } from '../db';
 import { servers } from '../schema';
 import { eq } from 'drizzle-orm';
@@ -20,13 +20,16 @@ export default function (app: Hono, client: Client) {
         const auth = await authenticate(c);
         if (!auth) return c.json({ error: 'Unauthorized' }, 401);
 
-        const { channel, module } = await c.req.json() as Record<string, string>;
+        const { channel, module } = (await c.req.json()) as Record<
+            string,
+            string
+        >;
         const serverId = auth;
 
         if (!channel) {
             return c.json({ error: 'Channel ID is required' }, 400);
         }
-        const channelData = await fetchGuildChannel(client, serverId, channel)
+        const channelData = await fetchGuildChannel(client, serverId, channel);
         if (!channelData) {
             return c.json({ error: 'Channel not found' }, 404);
         }
@@ -44,14 +47,16 @@ export default function (app: Hono, client: Client) {
         }
 
         // Get the auto moderation manager
-        const autoModManager =
-            (await fetchGuild(client, serverId))?.autoModerationRules;
+        const autoModManager = (await fetchGuild(client, serverId))
+            ?.autoModerationRules;
         if (!autoModManager) {
             return c.json({ error: 'AutoModManager not available' }, 500);
         }
 
         try {
-            const index = serverRecord.modules.findIndex((mod) => mod.name === module);
+            const index = serverRecord.modules.findIndex(
+                (mod) => mod.name === module,
+            );
             serverRecord.modules[index].log = channel;
 
             await db
@@ -62,7 +67,7 @@ export default function (app: Hono, client: Client) {
 
             for (const mod of serverRecord.modules) {
                 try {
-                    if(!mod.id) continue;
+                    if (!mod.id) continue;
                     const rule = await autoModManager.fetch(mod.id);
                     if (rule) {
                         const existingActions = rule.actions;
