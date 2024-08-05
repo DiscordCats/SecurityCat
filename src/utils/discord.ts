@@ -51,7 +51,10 @@ export async function authenticate(c: Context) {
 
         for (const roleId of memberRoles) {
             const role = guild.roles.cache.get(roleId);
-            if (role && (role.permissions.bitfield & PermissionFlagsBits.ManageGuild)) {
+            if (
+                role &&
+                role.permissions.bitfield & PermissionFlagsBits.ManageGuild
+            ) {
                 hasManageGuildPermission = true;
                 break;
             }
