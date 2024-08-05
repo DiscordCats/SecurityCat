@@ -9,5 +9,6 @@ export default {
             content: 'Timeout setup skipped.',
             ephemeral: true,
         });
+        // this needs to change the value of "duration" to off
     },
 } satisfies Command;
