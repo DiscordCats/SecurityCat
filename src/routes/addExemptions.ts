@@ -2,7 +2,7 @@ import { AutoModerationActionType, Client, Snowflake } from 'discord.js';
 import { Context, Hono } from 'hono';
 import { authenticate } from '../utils/discord';
 import { db } from '../db';
-import { servers } from '../schema';
+import {Modules, servers} from '../schema';
 import { eq } from 'drizzle-orm';
 
 // Adding both exempt roles and channels
@@ -120,10 +120,10 @@ module.exports = function (app: Hono, client: Client) {
                 mod.id === ruleId
                     ? {
                           ...mod,
-                          bypass: [
-                              ...updatedExemptRoles,
-                              ...updatedExemptChannels,
-                          ],
+                          bypass: {
+                              roles: updatedExemptRoles,
+                              channels: updatedExemptChannels
+                          },
                       }
                     : mod,
             );

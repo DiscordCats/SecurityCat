@@ -12,7 +12,8 @@ export default function (app: Hono, client: Client) {
         const modules = await db
             .select({ modules: servers.modules })
             .from(servers)
-            .where(eq(servers.id, auth));
+            .where(eq(servers.id, auth))
+            .execute();
         return c.json(modules[0]?.modules || []);
     });
 }
