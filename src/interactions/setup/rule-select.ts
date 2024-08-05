@@ -8,10 +8,10 @@ import {
     ButtonStyle,
     ChannelSelectMenuBuilder,
 } from 'discord.js';
-import { Command } from '../../types/discord';
-import { db } from '../../db';
-import { Modules, servers } from '../../schema';
-import { eq } from 'drizzle-orm';
+import {Command} from '../../types/discord';
+import {db} from '../../db';
+import {Modules, servers} from '../../schema';
+import {eq} from 'drizzle-orm';
 import rules from '../../../rules.json';
 
 export default {
@@ -45,23 +45,28 @@ export default {
                     keywordFilter: rules[ruleName].words,
                     regexPatterns: rules[ruleName].regex,
                 },
-                actions: [{ type: AutoModerationActionType.BlockMessage }],
+                actions: [{type: AutoModerationActionType.BlockMessage}],
                 enabled: true,
             });
 
             newModules.push({
+                enabled: true, // assuming the module is enabled by default
                 name: ruleName,
                 id: rule.id,
-                log: '', // Log channel will be set later
-                duration: '',
-                bypass: [],
+                log: null, // Log channel will be set later
+                duration: null, // Duration will be set later
+                bypass: {
+                    words: [],
+                    roles: [],
+                    channels: [],
+                },
                 blockMessageEnabled: true, // automatically set to true, because it enables it by default
             });
         }
 
         await db
             .update(servers)
-            .set({ modules: newModules })
+            .set({modules: newModules})
             .where(eq(servers.id, serverId))
             .execute();
 

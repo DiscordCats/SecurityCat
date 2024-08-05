@@ -6,12 +6,11 @@ import {
     AutoModerationRuleTriggerType,
     ChatInputCommandInteraction,
     PermissionFlagsBits,
-    Client,
 } from 'discord.js';
-import { Command } from '../../types/discord';
-import { db } from '../../db';
-import { Modules, servers } from '../../schema';
-import { eq } from 'drizzle-orm';
+import {Command} from '../../types/discord';
+import {db} from '../../db';
+import {Modules, servers} from '../../schema';
+import {eq} from 'drizzle-orm';
 import rules from '../../../rules.json';
 
 // TODO: The "too tired to do it today so ill do it tomorrow list:
@@ -22,13 +21,13 @@ import rules from '../../../rules.json';
 //  if your name is Jay, you should split this command apart if possible, I couldn't figure out how to make a subcommand multi-file
 
 const timeoutDurations = [
-    { label: 'Off', value: 'off' },
-    { label: '60 secs', value: '60' },
-    { label: '5 mins', value: '300' },
-    { label: '10 mins', value: '600' },
-    { label: '1 hour', value: '3600' },
-    { label: '1 day', value: '86400' },
-    { label: '1 week', value: '604800' },
+    {label: 'Off', value: 'off'},
+    {label: '60 secs', value: '60'},
+    {label: '5 mins', value: '300'},
+    {label: '10 mins', value: '600'},
+    {label: '1 hour', value: '3600'},
+    {label: '1 day', value: '86400'},
+    {label: '1 week', value: '604800'},
 ];
 
 export default {
@@ -234,20 +233,20 @@ export default {
                     });
                 }
 
-                await rule.edit({ actions: newActions });
+                await rule.edit({actions: newActions});
 
                 const updatedModules = serverRecord.modules.map((mod) =>
                     mod.name === moduleName
                         ? {
-                              ...mod,
-                              blockMessageEnabled: !blockMessageActionExists,
-                          }
+                            ...mod,
+                            blockMessageEnabled: !blockMessageActionExists,
+                        }
                         : mod,
                 );
 
                 await db
                     .update(servers)
-                    .set({ modules: updatedModules })
+                    .set({modules: updatedModules})
                     .where(eq(servers.id, serverId))
                     .execute();
 
@@ -339,17 +338,17 @@ export default {
                     });
                 }
 
-                await rule.edit({ actions: newActions });
+                await rule.edit({actions: newActions});
 
                 const updatedModules = serverRecord.modules.map((mod) =>
                     mod.name === moduleName
-                        ? { ...mod, duration: duration ?? 'defaultDuration' }
+                        ? {...mod, duration: duration ?? 'defaultDuration'}
                         : mod,
                 );
 
                 await db
                     .update(servers)
-                    .set({ modules: updatedModules })
+                    .set({modules: updatedModules})
                     .where(eq(servers.id, serverId))
                     .execute();
 
@@ -400,12 +399,12 @@ export default {
 
                 // Update the log channel in the database and in the rule actions
                 const updatedModules = serverRecord.modules.map((mod) =>
-                    mod.name === moduleName ? { ...mod, log: channelId } : mod,
+                    mod.name === moduleName ? {...mod, log: channelId} : mod,
                 );
 
                 await db
                     .update(servers)
-                    .set({ modules: updatedModules })
+                    .set({modules: updatedModules})
                     .where(eq(servers.id, serverId))
                     .execute();
 
@@ -436,7 +435,7 @@ export default {
                     });
                 }
 
-                await rule.edit({ actions: newActions });
+                await rule.edit({actions: newActions});
 
                 return interaction.reply({
                     content: `Log channel for module "${moduleName}" has been set to <#${channelId}>.`,
@@ -470,7 +469,7 @@ export default {
                         regexPatterns: rules[moduleName]?.regex || [],
                     },
                     actions: [
-                        { type: AutoModerationActionType.BlockMessage },
+                        {type: AutoModerationActionType.BlockMessage},
                         {
                             type: AutoModerationActionType.SendAlertMessage,
                             metadata: {
@@ -484,18 +483,23 @@ export default {
                 const updatedModules = [
                     ...serverRecord.modules,
                     {
+                        enabled: true,
                         name: moduleName,
                         id: rule.id,
                         log: serverRecord.id,
                         duration: '',
-                        bypass: [],
+                        bypass: {
+                            words: [],
+                            roles: [],
+                            channels: [],
+                        },
                         blockMessageEnabled: true,
                     },
                 ];
 
                 await db
                     .update(servers)
-                    .set({ modules: updatedModules })
+                    .set({modules: updatedModules})
                     .where(eq(servers.id, serverId))
                     .execute();
 
@@ -518,6 +522,13 @@ export default {
             }
 
             try {
+                if (!module.id) {
+                    return interaction.reply({
+                        content: `No module found with the name "${moduleName}".`,
+                        ephemeral: true,
+                    });
+                }
+
                 const rule = await autoModManager.fetch(module.id);
                 if (rule) {
                     await rule.delete();
@@ -529,7 +540,7 @@ export default {
 
                 await db
                     .update(servers)
-                    .set({ modules: updatedModules })
+                    .set({modules: updatedModules})
                     .where(eq(servers.id, serverId))
                     .execute();
 
