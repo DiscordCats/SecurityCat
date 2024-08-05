@@ -1,4 +1,4 @@
-import { Client, PermissionFlagsBits } from 'discord.js';
+import {Client, Embed, PermissionFlagsBits} from 'discord.js';
 import axios from 'axios';
 import { Context } from 'hono';
 import { client } from '../index';
@@ -92,4 +92,17 @@ export async function authenticate(c: Context) {
         console.error('Error during authentication:', error);
         return false;
     }
+}
+
+export async function sendLog(
+    client: Client,
+    serverId: string,
+    channel: string | null,
+    message: string | Embed,
+) {
+    if (!channel) return;
+    const channelData = await fetchGuildChannel(client, serverId, channel);
+    if (!channelData) return;
+    if(!channelData.isTextBased()) return;
+    await channelData.send(typeof message === 'string' ? { content: message } : { embeds: [message] });
 }
