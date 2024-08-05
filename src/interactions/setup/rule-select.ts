@@ -1,17 +1,17 @@
 import {
-    AnySelectMenuInteraction,
     ActionRowBuilder,
+    AnySelectMenuInteraction,
+    AutoModerationActionType,
+    AutoModerationRuleEventType,
+    AutoModerationRuleTriggerType,
     ButtonBuilder,
     ButtonStyle,
     ChannelSelectMenuBuilder,
-    AutoModerationRuleEventType,
-    AutoModerationRuleTriggerType,
-    AutoModerationActionType,
 } from 'discord.js';
-import { Command } from '../../types/discord';
-import { db } from '../../db';
-import { servers, Modules } from '../../schema';
-import { eq } from 'drizzle-orm';
+import {Command} from '../../types/discord';
+import {db} from '../../db';
+import {Modules, servers} from '../../schema';
+import {eq} from 'drizzle-orm';
 import rules from '../../../rules.json';
 
 export default {
@@ -45,7 +45,7 @@ export default {
                     keywordFilter: rules[ruleName].words,
                     regexPatterns: rules[ruleName].regex,
                 },
-                actions: [{ type: AutoModerationActionType.BlockMessage }],
+                actions: [{type: AutoModerationActionType.BlockMessage}],
                 enabled: true,
             });
 
@@ -55,12 +55,13 @@ export default {
                 log: '', // Log channel will be set later
                 duration: '',
                 bypass: [],
+                blockMessageEnabled: true, // automatically set to true, because it enables it by default
             });
         }
 
         await db
             .update(servers)
-            .set({ modules: newModules })
+            .set({modules: newModules})
             .where(eq(servers.id, serverId))
             .execute();
 

@@ -1,4 +1,4 @@
-import { pgTable, text, jsonb, integer } from 'drizzle-orm/pg-core';
+import {jsonb, pgTable, text} from 'drizzle-orm/pg-core';
 
 export type Modules = {
     name: string;
@@ -6,6 +6,7 @@ export type Modules = {
     log: string;
     duration: string;
     bypass: string[];
+    blockMessageEnabled: boolean;
 };
 
 export const servers = pgTable('servers', {
