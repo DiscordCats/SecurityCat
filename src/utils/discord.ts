@@ -1,4 +1,4 @@
-import {Client, PermissionFlagsBits} from 'discord.js';
+import { Client, PermissionFlagsBits } from 'discord.js';
 import axios from 'axios';
 import { Context } from 'hono';
 import { client } from '../index';
@@ -10,10 +10,17 @@ export async function fetchGuild(client: Client, guildId: string) {
     );
 }
 
-export async function fetchGuildMember(client: Client, guildId: string, userId: string){
+export async function fetchGuildMember(
+    client: Client,
+    guildId: string,
+    userId: string,
+) {
     const guild = await fetchGuild(client, guildId);
     if (!guild) return null;
-    return guild.members.cache.get(userId) || await guild.members.fetch(userId).catch(() => null);
+    return (
+        guild.members.cache.get(userId) ||
+        (await guild.members.fetch(userId).catch(() => null))
+    );
 }
 
 export async function authenticate(c: Context) {
@@ -46,8 +53,14 @@ export async function authenticate(c: Context) {
             return false;
         }
 
-        const guildMember = await fetchGuildMember(client, serverId, member.user.id);
-        let hasManageGuildPermission = guildMember?.permissions.has(PermissionFlagsBits.ManageGuild) || false;
+        const guildMember = await fetchGuildMember(
+            client,
+            serverId,
+            member.user.id,
+        );
+        let hasManageGuildPermission =
+            guildMember?.permissions.has(PermissionFlagsBits.ManageGuild) ||
+            false;
 
         if (!hasManageGuildPermission) {
             console.log('Insufficient permissions for ManageGuild');

@@ -48,7 +48,8 @@ export default {
                         {
                             type: ApplicationCommandOptionType.String,
                             name: 'module',
-                            description: 'The module name to toggle BlockMessage action',
+                            description:
+                                'The module name to toggle BlockMessage action',
                             required: true,
                             autocomplete: true,
                         },
@@ -108,7 +109,8 @@ export default {
                 {
                     type: ApplicationCommandOptionType.String,
                     name: 'module',
-                    description: 'The module you want to add (e.g. scams, invites, brainrot)',
+                    description:
+                        'The module you want to add (e.g. scams, invites, brainrot)',
                     required: true,
                     autocomplete: true,
                 },
@@ -173,7 +175,9 @@ export default {
             });
         }
 
-        const module = serverRecord.modules.find((mod: Modules) => mod.name === moduleName);
+        const module = serverRecord.modules.find(
+            (mod: Modules) => mod.name === moduleName,
+        );
         const ruleId = module?.id;
 
         if (subcommandGroup === 'block-messages' && subcommand === 'toggle') {
@@ -196,22 +200,32 @@ export default {
                 let blockMessageActionExists = false;
                 const newActions: AutoModerationActionOptions[] = rule.actions
                     .map((action) => {
-                        if (action.type === AutoModerationActionType.BlockMessage) {
+                        if (
+                            action.type ===
+                            AutoModerationActionType.BlockMessage
+                        ) {
                             blockMessageActionExists = true;
                             return null; // Mark for removal
                         }
-                        if (action.type === AutoModerationActionType.SendAlertMessage) {
+                        if (
+                            action.type ===
+                            AutoModerationActionType.SendAlertMessage
+                        ) {
                             return {
                                 ...action,
                                 metadata: {
                                     ...action.metadata,
-                                    channel: action.metadata.channelId ?? 'never gonna give you up',
+                                    channel:
+                                        action.metadata.channelId ??
+                                        'never gonna give you up',
                                 },
                             };
                         }
                         return action;
                     })
-                    .filter((action) => action !== null) as AutoModerationActionOptions[]; // Filter out the nulls
+                    .filter(
+                        (action) => action !== null,
+                    ) as AutoModerationActionOptions[]; // Filter out the nulls
 
                 if (!blockMessageActionExists) {
                     newActions.push({
@@ -224,8 +238,11 @@ export default {
 
                 const updatedModules = serverRecord.modules.map((mod) =>
                     mod.name === moduleName
-                        ? { ...mod, blockMessageEnabled: !blockMessageActionExists }
-                        : mod
+                        ? {
+                              ...mod,
+                              blockMessageEnabled: !blockMessageActionExists,
+                          }
+                        : mod,
                 );
 
                 await db
@@ -243,7 +260,10 @@ export default {
                     ephemeral: true,
                 });
             } catch (err) {
-                console.error(`Error toggling BlockMessage action for rule ${ruleId}:`, err);
+                console.error(
+                    `Error toggling BlockMessage action for rule ${ruleId}:`,
+                    err,
+                );
                 return interaction.reply({
                     content: 'Failed to toggle BlockMessage action.',
                     ephemeral: true,
@@ -273,12 +293,17 @@ export default {
 
                 const newActions: AutoModerationActionOptions[] = rule.actions
                     .map((action) => {
-                        if (action.type === AutoModerationActionType.SendAlertMessage) {
+                        if (
+                            action.type ===
+                            AutoModerationActionType.SendAlertMessage
+                        ) {
                             return {
                                 ...action,
                                 metadata: {
                                     ...action.metadata,
-                                    channel: action.metadata.channelId ?? 'placeholder-channel',
+                                    channel:
+                                        action.metadata.channelId ??
+                                        'placeholder-channel',
                                 },
                             };
                         }
@@ -288,7 +313,12 @@ export default {
                             if (duration !== '') {
                                 return {
                                     type: AutoModerationActionType.Timeout,
-                                    metadata: { durationSeconds: parseInt(<string>duration, 10) },
+                                    metadata: {
+                                        durationSeconds: parseInt(
+                                            <string>duration,
+                                            10,
+                                        ),
+                                    },
                                 };
                             } else {
                                 return null; // Remove action if duration is off
@@ -296,12 +326,16 @@ export default {
                         }
                         return action;
                     })
-                    .filter((action) => action !== null) as AutoModerationActionOptions[];
+                    .filter(
+                        (action) => action !== null,
+                    ) as AutoModerationActionOptions[];
 
                 if (!timeoutActionExists && duration !== '') {
                     newActions.push({
                         type: AutoModerationActionType.Timeout,
-                        metadata: { durationSeconds: parseInt(<string>duration, 10) },
+                        metadata: {
+                            durationSeconds: parseInt(<string>duration, 10),
+                        },
                     });
                 }
 
@@ -310,7 +344,7 @@ export default {
                 const updatedModules = serverRecord.modules.map((mod) =>
                     mod.name === moduleName
                         ? { ...mod, duration: duration ?? 'defaultDuration' }
-                        : mod
+                        : mod,
                 );
 
                 await db
@@ -321,7 +355,7 @@ export default {
 
                 const message =
                     duration !== ''
-                        ? `Timeout duration for module "${moduleName}" has been set to ${timeoutDurations.find(d => d.value === durationValue)?.label || durationValue} seconds.`
+                        ? `Timeout duration for module "${moduleName}" has been set to ${timeoutDurations.find((d) => d.value === durationValue)?.label || durationValue} seconds.`
                         : `Timeout duration for module "${moduleName}" has been disabled.`;
 
                 return interaction.reply({
@@ -329,7 +363,10 @@ export default {
                     ephemeral: true,
                 });
             } catch (err) {
-                console.error(`Error updating timeout duration for rule ${ruleId}:`, err);
+                console.error(
+                    `Error updating timeout duration for rule ${ruleId}:`,
+                    err,
+                );
                 return interaction.reply({
                     content: 'Failed to update timeout duration.',
                     ephemeral: true,
@@ -363,7 +400,7 @@ export default {
 
                 // Update the log channel in the database and in the rule actions
                 const updatedModules = serverRecord.modules.map((mod) =>
-                    mod.name === moduleName ? { ...mod, log: channelId } : mod
+                    mod.name === moduleName ? { ...mod, log: channelId } : mod,
                 );
 
                 await db
@@ -373,18 +410,22 @@ export default {
                     .execute();
 
                 let actionUpdated = false;
-                const newActions: AutoModerationActionOptions[] = rule.actions.map((action) => {
-                    if (action.type === AutoModerationActionType.SendAlertMessage) {
-                        actionUpdated = true;
-                        return {
-                            type: AutoModerationActionType.SendAlertMessage,
-                            metadata: {
-                                channel: channelId,
-                            },
-                        };
-                    }
-                    return action;
-                });
+                const newActions: AutoModerationActionOptions[] =
+                    rule.actions.map((action) => {
+                        if (
+                            action.type ===
+                            AutoModerationActionType.SendAlertMessage
+                        ) {
+                            actionUpdated = true;
+                            return {
+                                type: AutoModerationActionType.SendAlertMessage,
+                                metadata: {
+                                    channel: channelId,
+                                },
+                            };
+                        }
+                        return action;
+                    });
 
                 if (!actionUpdated) {
                     newActions.push({
@@ -402,7 +443,10 @@ export default {
                     ephemeral: true,
                 });
             } catch (err) {
-                console.error(`Error updating log channel for rule ${ruleId}:`, err);
+                console.error(
+                    `Error updating log channel for rule ${ruleId}:`,
+                    err,
+                );
                 return interaction.reply({
                     content: 'Failed to update log channel.',
                     ephemeral: true,
@@ -456,7 +500,7 @@ export default {
                     .execute();
 
                 await interaction.reply(
-                    `Added module "${moduleName}" with rule ID ${rule.id}.`
+                    `Added module "${moduleName}" with rule ID ${rule.id}.`,
                 );
             } catch (err) {
                 console.error(`Error adding module "${moduleName}":`, err);
@@ -480,7 +524,7 @@ export default {
                 }
 
                 const updatedModules = serverRecord.modules.filter(
-                    (mod) => mod.name !== moduleName
+                    (mod) => mod.name !== moduleName,
                 );
 
                 await db

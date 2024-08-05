@@ -11,9 +11,8 @@ export type Modules = {
         roles: string[]; // role ids that bypass the module
         channels: string[]; // channel ids that bypass the module
         // should all be empty arrays if none
-    }
+    };
     blockMessageEnabled: boolean; // whether the message should be blocked
-
 };
 
 export const servers = pgTable('servers', {

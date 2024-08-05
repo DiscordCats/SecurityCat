@@ -29,22 +29,31 @@ export default {
         }
 
         let choices: string[] = [];
-        const enabledModules = serverRecord.modules.map((mod: Modules) => mod.name);
+        const enabledModules = serverRecord.modules.map(
+            (mod: Modules) => mod.name,
+        );
 
         if (subcommand === 'add-module') {
             // show modules that are not enabled
-            choices = Object.keys(rules).filter((moduleName) => !enabledModules.includes(moduleName));
-        } else if (subcommand === 'remove-module' || subcommand === 'block-messages' || subcommand === 'timeout-duration' || subcommand === 'log-channel') {
+            choices = Object.keys(rules).filter(
+                (moduleName) => !enabledModules.includes(moduleName),
+            );
+        } else if (
+            subcommand === 'remove-module' ||
+            subcommand === 'block-messages' ||
+            subcommand === 'timeout-duration' ||
+            subcommand === 'log-channel'
+        ) {
             // show enabled modules
             choices = enabledModules;
         }
 
         const filteredChoices = choices.filter((choice) =>
-            choice.toLowerCase().includes(focusedValue.toLowerCase())
+            choice.toLowerCase().includes(focusedValue.toLowerCase()),
         );
 
         await interaction.respond(
-            filteredChoices.map((choice) => ({ name: choice, value: choice }))
+            filteredChoices.map((choice) => ({ name: choice, value: choice })),
         );
     },
 } satisfies Command;
