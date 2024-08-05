@@ -123,7 +123,7 @@ module.exports = function (app: Hono, client: Client) {
                           bypass: {
                               roles: updatedExemptRoles,
                               channels: updatedExemptChannels,
-                              words: rule.triggerMetadata.allowList as string[],
+                              words: [...rule.triggerMetadata.allowList],
                           },
                       }
                     : mod,
