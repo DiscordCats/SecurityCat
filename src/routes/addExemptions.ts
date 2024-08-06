@@ -2,7 +2,7 @@ import { AutoModerationActionType, Client, Snowflake } from 'discord.js';
 import { Context, Hono } from 'hono';
 import { authenticate } from '../utils/discord';
 import { db } from '../db';
-import { Modules, servers } from '../schema';
+import { servers } from '../schema';
 import { eq } from 'drizzle-orm';
 
 // Adding both exempt roles and channels
@@ -46,7 +46,7 @@ module.exports = function (app: Hono, client: Client) {
             if (!auth) return c.json({ error: 'Unauthorized' }, 401);
 
             const payload: ExemptionPayload = await c.req.json();
-            const { ruleId, exemptRoles, exemptChannels } = payload;
+            const { ruleId, exemptRoles = [], exemptChannels = [] } = payload;
             const serverId: string = auth;
 
             if (!ruleId) {
@@ -88,22 +88,18 @@ module.exports = function (app: Hono, client: Client) {
                 : [];
 
             // add exempt roles if provided
-            if (Array.isArray(exemptRoles)) {
-                exemptRoles.forEach((roleId) => {
-                    if (!updatedExemptRoles.includes(roleId)) {
-                        updatedExemptRoles.push(roleId);
-                    }
-                });
-            }
+            exemptRoles.forEach((roleId) => {
+                if (!updatedExemptRoles.includes(roleId)) {
+                    updatedExemptRoles.push(roleId);
+                }
+            });
 
             // add exempt channels if provided
-            if (Array.isArray(exemptChannels)) {
-                exemptChannels.forEach((channelId) => {
-                    if (!updatedExemptChannels.includes(channelId)) {
-                        updatedExemptChannels.push(channelId);
-                    }
-                });
-            }
+            exemptChannels.forEach((channelId) => {
+                if (!updatedExemptChannels.includes(channelId)) {
+                    updatedExemptChannels.push(channelId);
+                }
+            });
 
             // discord limits for exempt roles and channels to 20 and 50 respectively
             if (updatedExemptRoles.length > 20) updatedExemptRoles.length = 20;
@@ -116,18 +112,19 @@ module.exports = function (app: Hono, client: Client) {
                 exemptChannels: updatedExemptChannels,
             });
 
-            const updatedModules = serverRecord.modules.map((mod) =>
-                mod.id === ruleId
-                    ? {
-                          ...mod,
-                          bypass: {
-                              roles: updatedExemptRoles,
-                              channels: updatedExemptChannels,
-                              words: [...rule.triggerMetadata.allowList],
-                          },
-                      }
-                    : mod,
-            );
+            const updatedModules = serverRecord.modules.map((mod) => {
+                if (mod.id === ruleId) {
+                    return {
+                        ...mod,
+                        bypass: {
+                            words: mod.bypass.words || [],
+                            roles: updatedExemptRoles,
+                            channels: updatedExemptChannels,
+                        },
+                    };
+                }
+                return mod;
+            });
 
             await db
                 .update(servers)
