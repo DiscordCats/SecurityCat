@@ -1,8 +1,9 @@
-import {Client, Message} from 'discord.js';
-import {getServerModules} from '../../db';
-import {Modules} from '../../schema';
-import {sendLog} from '../../utils/discord';
+import { Client, Message } from 'discord.js';
+import { getServerModules } from '../../db';
+import { Modules } from '../../schema';
+import { sendLog } from '../../utils/discord';
 import rules from '../../utils/rulesets';
+import { createRuleViolationEmbed } from '../../utils/embeds';
 
 export default async function (client: Client) {
     client.on('messageCreate', async (message) => {
@@ -26,14 +27,14 @@ export default async function (client: Client) {
     });
 }
 
-
 async function handleMessage(client: Client, message: Message<true>) {
     const modules = (await getServerModules(message.guild.id)).filter(
         (module) => module.enabled,
     );
     if (modules.length === 0) return;
 
-    const memberRoles = message.member?.roles.cache.map((role) => role.id) || [];
+    const memberRoles =
+        message.member?.roles.cache.map((role) => role.id) || [];
 
     let content = message.content.toLowerCase();
     content = content.replace(/[.\s]/g, ''); // remove dots and whitespace
@@ -42,14 +43,17 @@ async function handleMessage(client: Client, message: Message<true>) {
         const ruleSet = rules[module.name];
         if (!ruleSet) continue;
         if (module.bypass.channels.includes(message.channel.id)) continue;
-        if (memberRoles.some((roleId) => module.bypass.roles.includes(roleId))) continue;
+        if (memberRoles.some((roleId) => module.bypass.roles.includes(roleId)))
+            continue;
 
         for (const word of module.bypass.words) {
             const regex = new RegExp(word, 'gi');
             content = content.replace(regex, '');
         }
 
-        if (ruleSet.words.some((word) => content.includes(word.toLowerCase()))) {
+        if (
+            ruleSet.words.some((word) => content.includes(word.toLowerCase()))
+        ) {
             await punish(client, message, module);
             break;
         }
@@ -58,7 +62,8 @@ async function handleMessage(client: Client, message: Message<true>) {
 
 async function punish(client: Client, message: Message<true>, module: Modules) {
     try {
-        await sendLog(client, message.guild.id, module.log, '');
+        const embed = createRuleViolationEmbed(message, module.name);
+        await sendLog(client, message.guild.id, module.log, embed);
         if (module.blockMessageEnabled) await message.delete();
 
         if (module.duration) {

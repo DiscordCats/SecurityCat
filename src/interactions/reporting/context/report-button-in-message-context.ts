@@ -2,11 +2,15 @@ import {
     ActionRowBuilder,
     ButtonBuilder,
     ButtonStyle,
-    EmbedBuilder,
     MessageContextMenuCommandInteraction,
 } from 'discord.js';
 import { Command } from '../../../types/discord';
 import dotenv from 'dotenv';
+import {
+    createErrorEmbed,
+    createReportEmbed,
+    createSuccessEmbed,
+} from '../../../utils/embeds';
 
 dotenv.config();
 
@@ -18,11 +22,9 @@ export default {
     role: 'MESSAGE_CONTEXT_MENU',
     run: async (interaction: MessageContextMenuCommandInteraction) => {
         if (!reportGuildId || !reportChannelId) {
-            const errorEmbed = new EmbedBuilder()
-                .setTitle('Error')
-                .setDescription('Reporting is not configured properly.')
-                .setColor('Red');
-
+            const errorEmbed = createErrorEmbed(
+                'Reporting is not configured properly.',
+            );
             return interaction.reply({
                 embeds: [errorEmbed],
                 ephemeral: true,
@@ -34,22 +36,13 @@ export default {
         const reportedContent = message.content || '[No text content]';
         const reportedAuthor = message.author;
 
-        const reportEmbed = new EmbedBuilder()
-            .setTitle('Message Report')
-            .setDescription(`A message has been reported.`)
-            .addFields(
-                {
-                    name: 'Reported by',
-                    value: `${reporter.tag} (${reporter.id})`,
-                },
-                { name: 'Message Content', value: reportedContent },
-                {
-                    name: 'Author',
-                    value: `${reportedAuthor.tag} (${reportedAuthor.id})`,
-                },
-            )
-            .setColor('Red')
-            .setTimestamp();
+        const reportEmbed = createReportEmbed(
+            reporter.tag,
+            reporter.id,
+            reportedContent,
+            reportedAuthor.tag,
+            reportedAuthor.id,
+        );
 
         const approveButton = new ButtonBuilder()
             .setCustomId('approve-report')
@@ -73,12 +66,9 @@ export default {
                 await reportGuild.channels.fetch(reportChannelId);
 
             if (!reportChannel?.isTextBased()) {
-                const errorEmbed = new EmbedBuilder()
-                    .setTitle('Error')
-                    .setDescription(
-                        'Configured report channel is not a text channel.',
-                    )
-                    .setColor('Red');
+                const errorEmbed = createErrorEmbed(
+                    'Configured report channel is not a text channel.',
+                );
 
                 return interaction.reply({
                     embeds: [errorEmbed],
@@ -91,10 +81,9 @@ export default {
                 components: [row],
             });
 
-            const successEmbed = new EmbedBuilder()
-                .setTitle('Success')
-                .setDescription('Message reported successfully.')
-                .setColor('Green');
+            const successEmbed = createSuccessEmbed(
+                'Message reported successfully.',
+            );
 
             await interaction.reply({
                 embeds: [successEmbed],
@@ -103,10 +92,9 @@ export default {
         } catch (error) {
             console.error('Error sending report:', error);
 
-            const errorEmbed = new EmbedBuilder()
-                .setTitle('Error')
-                .setDescription('There was an error reporting the message.')
-                .setColor('Red');
+            const errorEmbed = createErrorEmbed(
+                'There was an error reporting the message.',
+            );
 
             await interaction.reply({
                 embeds: [errorEmbed],

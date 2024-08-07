@@ -13,6 +13,7 @@ import { db } from '../../db';
 import { Modules, servers } from '../../schema';
 import { eq } from 'drizzle-orm';
 import rules from '../../../rules.json';
+import { createErrorEmbed } from '../../utils/embeds';
 
 export default {
     custom_id: 'rule-select',
@@ -20,7 +21,13 @@ export default {
     run: async (interaction: AnySelectMenuInteraction) => {
         const selectedRules = interaction.values;
         const serverId = interaction.guild?.id;
-        if (!serverId) return;
+        if (!serverId) {
+            const errorEmbed = createErrorEmbed('Server ID not found.');
+            return interaction.reply({
+                embeds: [errorEmbed],
+                ephemeral: true,
+            });
+        }
 
         const serverRecord = await db
             .select()
@@ -29,10 +36,24 @@ export default {
             .execute()
             .then((res) => res[0]);
 
-        if (!serverRecord) return;
+        if (!serverRecord) {
+            const errorEmbed = createErrorEmbed('No server record found.');
+            return interaction.reply({
+                embeds: [errorEmbed],
+                ephemeral: true,
+            });
+        }
 
         const autoModManager = interaction.guild?.autoModerationRules;
-        if (!autoModManager) return;
+        if (!autoModManager) {
+            const errorEmbed = createErrorEmbed(
+                'AutoModManager is not available.',
+            );
+            return interaction.reply({
+                embeds: [errorEmbed],
+                ephemeral: true,
+            });
+        }
 
         const newModules: Modules[] = [];
 

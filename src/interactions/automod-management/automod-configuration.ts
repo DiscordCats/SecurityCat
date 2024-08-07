@@ -12,11 +12,19 @@ import { db } from '../../db';
 import { Modules, servers } from '../../schema';
 import { eq } from 'drizzle-orm';
 import rules from '../../../rules.json';
+import {
+    createErrorEmbed,
+    createToggleMessageEmbed,
+    createTimeoutDurationEmbed,
+    createLogChannelSetEmbed,
+    createModuleAddedEmbed,
+    createModuleRemovedEmbed,
+} from '../../utils/embeds';
 
 // TODO: The "too tired to do it today so ill do it tomorrow list:
 //  Fix it saying stuff like "1 week seconds" when changing duration
 //  add bypass roles / channels
-//  use actual embeds
+//  [ x ] use actual embeds
 //  probably make the command names shorter
 //  if your name is Jay, you should split this command apart if possible, I couldn't figure out how to make a subcommand multi-file
 
@@ -140,7 +148,7 @@ export default {
 
         if (!serverId) {
             return interaction.reply({
-                content: 'Unable to determine server ID.',
+                embeds: [createErrorEmbed('Unable to determine server ID.')],
                 ephemeral: true,
             });
         }
@@ -154,7 +162,7 @@ export default {
 
         if (!serverRecord) {
             return interaction.reply({
-                content: 'Server record not found.',
+                embeds: [createErrorEmbed('Server record not found.')],
                 ephemeral: true,
             });
         }
@@ -162,14 +170,16 @@ export default {
         const autoModManager = interaction.guild?.autoModerationRules;
         if (!autoModManager) {
             return interaction.reply({
-                content: 'Unable to access AutoModerationRules.',
+                embeds: [
+                    createErrorEmbed('Unable to access AutoModerationRules.'),
+                ],
                 ephemeral: true,
             });
         }
 
         if (!moduleName) {
             return interaction.reply({
-                content: 'Module name must be provided.',
+                embeds: [createErrorEmbed('Module name must be provided.')],
                 ephemeral: true,
             });
         }
@@ -182,7 +192,11 @@ export default {
         if (subcommandGroup === 'block-messages' && subcommand === 'toggle') {
             if (!ruleId) {
                 return interaction.reply({
-                    content: `No module found with the name "${moduleName}".`,
+                    embeds: [
+                        createErrorEmbed(
+                            `No module found with the name "${moduleName}".`,
+                        ),
+                    ],
                     ephemeral: true,
                 });
             }
@@ -191,7 +205,11 @@ export default {
                 const rule = await autoModManager.fetch(ruleId);
                 if (!rule) {
                     return interaction.reply({
-                        content: `Rule not found for module "${moduleName}".`,
+                        embeds: [
+                            createErrorEmbed(
+                                `Rule not found for module "${moduleName}".`,
+                            ),
+                        ],
                         ephemeral: true,
                     });
                 }
@@ -250,12 +268,10 @@ export default {
                     .where(eq(servers.id, serverId))
                     .execute();
 
-                const message = blockMessageActionExists
-                    ? 'BlockMessage action has been disabled.'
-                    : 'BlockMessage action has been enabled.';
-
                 return interaction.reply({
-                    content: message,
+                    embeds: [
+                        createToggleMessageEmbed(!blockMessageActionExists),
+                    ],
                     ephemeral: true,
                 });
             } catch (err) {
@@ -264,7 +280,11 @@ export default {
                     err,
                 );
                 return interaction.reply({
-                    content: 'Failed to toggle BlockMessage action.',
+                    embeds: [
+                        createErrorEmbed(
+                            'Failed to toggle BlockMessage action.',
+                        ),
+                    ],
                     ephemeral: true,
                 });
             }
@@ -274,7 +294,11 @@ export default {
 
             if (!ruleId) {
                 return interaction.reply({
-                    content: `No module found with the name "${moduleName}".`,
+                    embeds: [
+                        createErrorEmbed(
+                            `No module found with the name "${moduleName}".`,
+                        ),
+                    ],
                     ephemeral: true,
                 });
             }
@@ -283,7 +307,11 @@ export default {
                 const rule = await autoModManager.fetch(ruleId);
                 if (!rule) {
                     return interaction.reply({
-                        content: `Rule not found for module "${moduleName}".`,
+                        embeds: [
+                            createErrorEmbed(
+                                `Rule not found for module "${moduleName}".`,
+                            ),
+                        ],
                         ephemeral: true,
                     });
                 }
@@ -352,13 +380,14 @@ export default {
                     .where(eq(servers.id, serverId))
                     .execute();
 
-                const message =
-                    duration !== ''
-                        ? `Timeout duration for module "${moduleName}" has been set to ${timeoutDurations.find((d) => d.value === durationValue)?.label || durationValue} seconds.`
-                        : `Timeout duration for module "${moduleName}" has been disabled.`;
+                const durationLabel = timeoutDurations.find(
+                    (d) => d.value === durationValue,
+                )?.label;
 
                 return interaction.reply({
-                    content: message,
+                    embeds: [
+                        createTimeoutDurationEmbed(moduleName, durationLabel),
+                    ],
                     ephemeral: true,
                 });
             } catch (err) {
@@ -367,7 +396,9 @@ export default {
                     err,
                 );
                 return interaction.reply({
-                    content: 'Failed to update timeout duration.',
+                    embeds: [
+                        createErrorEmbed('Failed to update timeout duration.'),
+                    ],
                     ephemeral: true,
                 });
             }
@@ -376,14 +407,18 @@ export default {
 
             if (!channelId) {
                 return interaction.reply({
-                    content: 'Channel must be provided.',
+                    embeds: [createErrorEmbed('Channel must be provided.')],
                     ephemeral: true,
                 });
             }
 
             if (!ruleId) {
                 return interaction.reply({
-                    content: `No module found with the name "${moduleName}".`,
+                    embeds: [
+                        createErrorEmbed(
+                            `No module found with the name "${moduleName}".`,
+                        ),
+                    ],
                     ephemeral: true,
                 });
             }
@@ -392,7 +427,11 @@ export default {
                 const rule = await autoModManager.fetch(ruleId);
                 if (!rule) {
                     return interaction.reply({
-                        content: `Rule not found for module "${moduleName}".`,
+                        embeds: [
+                            createErrorEmbed(
+                                `Rule not found for module "${moduleName}".`,
+                            ),
+                        ],
                         ephemeral: true,
                     });
                 }
@@ -438,7 +477,7 @@ export default {
                 await rule.edit({ actions: newActions });
 
                 return interaction.reply({
-                    content: `Log channel for module "${moduleName}" has been set to <#${channelId}>.`,
+                    embeds: [createLogChannelSetEmbed(moduleName, channelId)],
                     ephemeral: true,
                 });
             } catch (err) {
@@ -447,14 +486,18 @@ export default {
                     err,
                 );
                 return interaction.reply({
-                    content: 'Failed to update log channel.',
+                    embeds: [createErrorEmbed('Failed to update log channel.')],
                     ephemeral: true,
                 });
             }
         } else if (subcommand === 'add-module') {
             if (module) {
                 return interaction.reply({
-                    content: `The module "${moduleName}" is already enabled.`,
+                    embeds: [
+                        createErrorEmbed(
+                            `The module "${moduleName}" is already enabled.`,
+                        ),
+                    ],
                     ephemeral: true,
                 });
             }
@@ -503,20 +546,25 @@ export default {
                     .where(eq(servers.id, serverId))
                     .execute();
 
-                await interaction.reply(
-                    `Added module "${moduleName}" with rule ID ${rule.id}.`,
-                );
+                await interaction.reply({
+                    embeds: [createModuleAddedEmbed(moduleName, rule.id)],
+                    ephemeral: true,
+                });
             } catch (err) {
                 console.error(`Error adding module "${moduleName}":`, err);
                 return interaction.reply({
-                    content: 'Failed to add the module.',
+                    embeds: [createErrorEmbed('Failed to add the module.')],
                     ephemeral: true,
                 });
             }
         } else if (subcommand === 'remove-module') {
             if (!module) {
                 return interaction.reply({
-                    content: `The module "${moduleName}" is not enabled.`,
+                    embeds: [
+                        createErrorEmbed(
+                            `The module "${moduleName}" is not enabled.`,
+                        ),
+                    ],
                     ephemeral: true,
                 });
             }
@@ -524,7 +572,11 @@ export default {
             try {
                 if (!module.id) {
                     return interaction.reply({
-                        content: `No module found with the name "${moduleName}".`,
+                        embeds: [
+                            createErrorEmbed(
+                                `No module found with the name "${moduleName}".`,
+                            ),
+                        ],
                         ephemeral: true,
                     });
                 }
@@ -544,11 +596,14 @@ export default {
                     .where(eq(servers.id, serverId))
                     .execute();
 
-                await interaction.reply(`Removed module "${moduleName}".`);
+                await interaction.reply({
+                    embeds: [createModuleRemovedEmbed(moduleName)],
+                    ephemeral: true,
+                });
             } catch (err) {
                 console.error(`Error removing module "${moduleName}":`, err);
                 return interaction.reply({
-                    content: 'Failed to remove the module.',
+                    embeds: [createErrorEmbed('Failed to remove the module.')],
                     ephemeral: true,
                 });
             }

@@ -4,10 +4,13 @@ import {
     ButtonBuilder,
     ButtonInteraction,
     ButtonStyle,
-    EmbedBuilder,
     StringSelectMenuBuilder,
 } from 'discord.js';
 import rules from '../../../../rules.json';
+import {
+    createErrorEmbed,
+    createManageReportEmbed,
+} from '../../../utils/embeds';
 
 export default {
     custom_id: 'approve-report',
@@ -19,10 +22,9 @@ export default {
             )?.value;
 
         if (!originalMessageContent) {
-            const errorEmbed = new EmbedBuilder()
-                .setTitle('Error')
-                .setDescription('Original message content is not available.')
-                .setColor('Red');
+            const errorEmbed = createErrorEmbed(
+                'Original message content is not available.',
+            );
 
             return interaction.reply({
                 embeds: [errorEmbed],
@@ -30,13 +32,7 @@ export default {
             });
         }
 
-        const newEmbed = new EmbedBuilder()
-            .setTitle('Manage the reported content')
-            .addFields({
-                name: 'Message Content',
-                value: originalMessageContent,
-            })
-            .setColor('Yellow');
+        const newEmbed = createManageReportEmbed(originalMessageContent);
 
         const selectMenu = new StringSelectMenuBuilder()
             .setCustomId('rule-category-select')
@@ -67,7 +63,6 @@ export default {
             cancelButton,
         );
 
-        // this would have to be followUp if you want a response that goes before processing
         await interaction.reply({
             embeds: [newEmbed],
             components: [row1, row2],

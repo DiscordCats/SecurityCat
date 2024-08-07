@@ -14,6 +14,11 @@ import {
 import { db } from '../../db';
 import { servers } from '../../schema';
 import { eq } from 'drizzle-orm';
+import {
+    createErrorEmbed,
+    createSetupConfirmationEmbed,
+    createTimeoutSetupEmbed,
+} from '../../utils/embeds';
 
 export default {
     custom_id: 'create-log-channel',
@@ -21,8 +26,11 @@ export default {
     run: async (interaction: ButtonInteraction) => {
         const guild = interaction.guild;
         if (!guild) {
+            const errorEmbed = createErrorEmbed(
+                'This action can only be performed in a server.',
+            );
             return interaction.reply({
-                content: 'This action can only be performed in a server.',
+                embeds: [errorEmbed],
                 ephemeral: true,
             });
         }
@@ -48,8 +56,9 @@ export default {
             .then((res) => res[0]);
 
         if (!serverRecord) {
+            const errorEmbed = createErrorEmbed('Server record not found.');
             return interaction.reply({
-                content: 'Server record not found.',
+                embeds: [errorEmbed],
                 ephemeral: true,
             });
         }
@@ -67,19 +76,11 @@ export default {
 
         const autoModManager = guild.autoModerationRules;
         if (autoModManager) {
-            console.log('AutoModManager accessed successfully.');
-
             for (const mod of updatedModules) {
                 try {
-                    console.log(
-                        `Fetching rule for module ${mod.name} with ID ${mod.id}`,
-                    );
                     if (!mod.id) continue;
                     const rule = await autoModManager.fetch(mod.id);
                     if (rule) {
-                        console.log(
-                            `Rule found for module ${mod.name}, updating log channel.`,
-                        );
                         const existingActions = rule.actions;
 
                         let actionUpdated = false;
@@ -88,9 +89,6 @@ export default {
                                 action.type ===
                                 AutoModerationActionType.SendAlertMessage
                             ) {
-                                console.log(
-                                    `Updating log channel for rule ${mod.id}`,
-                                );
                                 actionUpdated = true;
                                 return {
                                     type: AutoModerationActionType.SendAlertMessage,
@@ -103,9 +101,6 @@ export default {
                         });
 
                         if (!actionUpdated) {
-                            console.log(
-                                `No SendAlertMessage action found for rule ${mod.id}, adding new action.`,
-                            );
                             newActions.push({
                                 type: AutoModerationActionType.SendAlertMessage,
                                 metadata: {
@@ -114,21 +109,11 @@ export default {
                             });
                         }
 
-                        console.log(
-                            'Sending the following actions to Discord:',
-                            JSON.stringify(newActions, null, 2),
-                        );
-
                         const editOptions: AutoModerationRuleEditOptions = {
                             actions: newActions,
                         };
 
                         await rule.edit(editOptions);
-                        console.log(
-                            `Successfully updated rule ${mod.id} with new log channel.`,
-                        );
-                    } else {
-                        console.log(`No rule found for module ${mod.name}`);
                     }
                 } catch (err) {
                     console.error(
@@ -141,8 +126,11 @@ export default {
             console.error('AutoModManager is not available.');
         }
 
+        const setupConfirmationEmbed = createSetupConfirmationEmbed(
+            `Created log channel ${logChannel.name} and set it for auto-moderation logs.`,
+        );
         await interaction.reply({
-            content: `Created log channel ${logChannel.name} and set it for auto-moderation logs.`,
+            embeds: [setupConfirmationEmbed],
             ephemeral: true,
         });
 
@@ -159,8 +147,11 @@ export default {
             noButton,
         );
 
+        const timeoutSetupEmbed = createTimeoutSetupEmbed(
+            'Would you like to set up timeouts for offenders?',
+        );
         await interaction.followUp({
-            content: 'Would you like to set up timeouts for offenders?',
+            embeds: [timeoutSetupEmbed],
             components: [row],
             ephemeral: true,
         });

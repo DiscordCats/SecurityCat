@@ -1,11 +1,11 @@
 import { Command } from '../../../types/discord';
 import {
     ActionRowBuilder,
-    EmbedBuilder,
     ModalSubmitInteraction,
     StringSelectMenuBuilder,
 } from 'discord.js';
 import rules from '../../../../rules.json';
+import { createEditReportEmbed } from '../../../utils/embeds';
 
 export default {
     custom_id: 'edit-report-modal',
@@ -29,11 +29,7 @@ export default {
                 selectMenu,
             );
 
-        const embed = new EmbedBuilder()
-            .setTitle('Edit Report')
-            .setDescription('Select a rules category to add the edited content')
-            .addFields({ name: 'Edited Content', value: editedContent })
-            .setColor('Yellow');
+        const embed = createEditReportEmbed(editedContent);
 
         await interaction.reply({
             embeds: [embed],

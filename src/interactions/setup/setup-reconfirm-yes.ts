@@ -5,6 +5,7 @@ import {
 } from 'discord.js';
 import { Command } from '../../types/discord';
 import rules from '../../../rules.json';
+import { createSetupConfirmationEmbed } from '../../utils/embeds';
 
 export default {
     custom_id: 'setup-reconfirm-yes',
@@ -27,9 +28,11 @@ export default {
                 ruleSelectMenu,
             );
 
+        const setupConfirmationEmbed = createSetupConfirmationEmbed(
+            'Please select the rules you want to enable for auto-moderation:',
+        );
         await interaction.reply({
-            content:
-                'Please select the rules you want to enable for auto-moderation:',
+            embeds: [setupConfirmationEmbed],
             components: [ruleSelectRow],
             ephemeral: true,
         });

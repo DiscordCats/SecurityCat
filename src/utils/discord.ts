@@ -1,4 +1,9 @@
-import { Client, Embed, PermissionFlagsBits } from 'discord.js';
+import {
+    Client,
+    EmbedBuilder,
+    PermissionFlagsBits,
+    TextChannel,
+} from 'discord.js';
 import axios from 'axios';
 import { Context } from 'hono';
 import { client } from '../index';
@@ -98,10 +103,10 @@ export async function sendLog(
     client: Client,
     serverId: string,
     channel: string | null,
-    message: string | Embed,
+    message: string | EmbedBuilder,
 ) {
     if (!channel) return;
-    const channelData = await fetchGuildChannel(client, serverId, channel);
+    const channelData = client.channels.cache.get(channel) as TextChannel;
     if (!channelData) return;
     if (!channelData.isTextBased()) return;
     await channelData.send(

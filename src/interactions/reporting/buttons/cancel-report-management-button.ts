@@ -1,15 +1,12 @@
 import { Command } from '../../../types/discord';
-import { ButtonInteraction, EmbedBuilder } from 'discord.js';
+import { ButtonInteraction } from 'discord.js';
+import { createCancelledEmbed } from '../../../utils/embeds';
 
 export default {
     custom_id: 'cancel-report',
     role: 'BUTTON',
     run: async (interaction: ButtonInteraction) => {
-        const cancelEmbed = new EmbedBuilder()
-            .setTitle('Cancelled')
-            .setDescription('Report management cancelled.')
-            .setColor('Red');
-
+        const cancelEmbed = createCancelledEmbed();
         await interaction.reply({
             embeds: [cancelEmbed],
             ephemeral: true,

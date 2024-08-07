@@ -9,6 +9,7 @@ import { db } from '../../db';
 import { servers } from '../../schema';
 import { eq } from 'drizzle-orm';
 import rules from '../../../rules.json';
+import { createErrorEmbed } from '../../utils/embeds';
 
 export default {
     name: 'setup',
@@ -18,8 +19,9 @@ export default {
         const serverId = interaction.guild?.id;
 
         if (!serverId) {
+            const errorEmbed = createErrorEmbed('Server ID not found.');
             return interaction.reply({
-                content: 'Server ID not found.',
+                embeds: [errorEmbed],
                 ephemeral: true,
             });
         }

@@ -11,14 +11,16 @@ import {
 import { db } from '../../db';
 import { servers } from '../../schema';
 import { eq } from 'drizzle-orm';
+import { createErrorEmbed } from '../../utils/embeds';
 
 export default {
     custom_id: 'log-channel-select',
     role: 'SELECT_MENU',
     run: async (interaction: AnySelectMenuInteraction) => {
         if (!interaction.isChannelSelectMenu()) {
+            const errorEmbed = createErrorEmbed('Invalid interaction type.');
             return interaction.reply({
-                content: 'Invalid interaction type.',
+                embeds: [errorEmbed],
                 ephemeral: true,
             });
         }
@@ -27,8 +29,9 @@ export default {
         const serverId = interaction.guild?.id;
 
         if (!serverId) {
+            const errorEmbed = createErrorEmbed('Server ID not found.');
             return interaction.reply({
-                content: 'Server ID not found.',
+                embeds: [errorEmbed],
                 ephemeral: true,
             });
         }
@@ -41,8 +44,9 @@ export default {
             .then((res) => res[0]);
 
         if (!serverRecord) {
+            const errorEmbed = createErrorEmbed('No server record found.');
             return interaction.reply({
-                content: 'No server record found.',
+                embeds: [errorEmbed],
                 ephemeral: true,
             });
         }
@@ -60,19 +64,11 @@ export default {
 
         const autoModManager = interaction.guild?.autoModerationRules;
         if (autoModManager) {
-            console.log('AutoModManager accessed successfully.');
-
             for (const mod of updatedModules) {
                 try {
-                    console.log(
-                        `Fetching rule for module ${mod.name} with ID ${mod.id}`,
-                    );
                     if (!mod.id) continue;
                     const rule = await autoModManager.fetch(mod.id);
                     if (rule) {
-                        console.log(
-                            `Rule found for module ${mod.name}, updating log channel.`,
-                        );
                         const existingActions = rule.actions;
 
                         let actionUpdated = false;
@@ -81,9 +77,6 @@ export default {
                                 action.type ===
                                 AutoModerationActionType.SendAlertMessage
                             ) {
-                                console.log(
-                                    `Updating log channel for rule ${mod.id}`,
-                                );
                                 actionUpdated = true;
                                 return {
                                     type: AutoModerationActionType.SendAlertMessage,
@@ -96,9 +89,6 @@ export default {
                         });
 
                         if (!actionUpdated) {
-                            console.log(
-                                `No SendAlertMessage action found for rule ${mod.id}, adding new action.`,
-                            );
                             newActions.push({
                                 type: AutoModerationActionType.SendAlertMessage,
                                 metadata: {
@@ -107,21 +97,11 @@ export default {
                             });
                         }
 
-                        console.log(
-                            'Sending the following actions to Discord:',
-                            JSON.stringify(newActions, null, 2),
-                        );
-
                         const editOptions: AutoModerationRuleEditOptions = {
                             actions: newActions,
                         };
 
                         await rule.edit(editOptions);
-                        console.log(
-                            `Successfully updated rule ${mod.id} with new log channel.`,
-                        );
-                    } else {
-                        console.log(`No rule found for module ${mod.name}`);
                     }
                 } catch (err) {
                     console.error(

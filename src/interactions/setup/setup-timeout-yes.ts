@@ -4,6 +4,7 @@ import {
     StringSelectMenuBuilder,
 } from 'discord.js';
 import { Command } from '../../types/discord';
+import { createTimeoutSetupEmbed } from '../../utils/embeds';
 
 const timeoutDurations = [
     { label: '60 secs', value: '60' },
@@ -28,8 +29,11 @@ export default {
                 timeoutMenu,
             );
 
+        const timeoutSetupEmbed = createTimeoutSetupEmbed(
+            'Please select the timeout duration:',
+        );
         await interaction.reply({
-            content: 'Please select the timeout duration:',
+            embeds: [timeoutSetupEmbed],
             components: [row],
             ephemeral: true,
         });

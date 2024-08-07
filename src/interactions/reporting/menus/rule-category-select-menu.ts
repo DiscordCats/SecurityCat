@@ -1,7 +1,11 @@
 import { Command } from '../../../types/discord';
-import { AnySelectMenuInteraction, EmbedBuilder } from 'discord.js';
+import { AnySelectMenuInteraction } from 'discord.js';
 import { readFileSync, writeFileSync } from 'fs';
 import path from 'path';
+import {
+    createErrorEmbed,
+    createRuleUpdatedEmbed,
+} from '../../../utils/embeds';
 
 export default {
     custom_id: 'rule-category-select',
@@ -20,11 +24,9 @@ export default {
         const contentToAdd = editedContent || originalContent;
 
         if (!contentToAdd) {
-            const errorEmbed = new EmbedBuilder()
-                .setTitle('Error')
-                .setDescription('No content available to add to rules.')
-                .setColor('Red');
-
+            const errorEmbed = createErrorEmbed(
+                'No content available to add to rules.',
+            );
             return interaction.reply({
                 embeds: [errorEmbed],
                 ephemeral: true,
@@ -41,15 +43,9 @@ export default {
         rules[selectedCategory].words.push(contentToAdd);
         writeFileSync(rulesPath, JSON.stringify(rules, null, 2), 'utf-8');
 
+        const ruleUpdatedEmbed = createRuleUpdatedEmbed(selectedCategory);
         await interaction.reply({
-            embeds: [
-                new EmbedBuilder()
-                    .setTitle('Rule Updated')
-                    .setDescription(
-                        `Message added to ${selectedCategory} rules.`,
-                    )
-                    .setColor('Green'),
-            ],
+            embeds: [ruleUpdatedEmbed],
             ephemeral: true,
         });
     },

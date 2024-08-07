@@ -3,6 +3,7 @@ import { Command } from '../../types/discord';
 import { db } from '../../db';
 import { servers } from '../../schema';
 import { eq } from 'drizzle-orm';
+import { createSetupConfirmationEmbed } from '../../utils/embeds';
 
 export default {
     custom_id: 'timeout-select',
@@ -64,9 +65,6 @@ export default {
                     });
                 }
 
-                console.log(
-                    `Passing data to discord: ${JSON.stringify(newActions, null, 2)}`,
-                );
                 await rule.edit({ actions: newActions });
 
                 await db
@@ -88,8 +86,11 @@ export default {
             }
         }
 
+        const setupConfirmationEmbed = createSetupConfirmationEmbed(
+            `Timeout set to ${duration} seconds.`,
+        );
         await interaction.reply({
-            content: `Timeout set to ${duration} seconds.`,
+            embeds: [setupConfirmationEmbed],
             ephemeral: true,
         });
     },
