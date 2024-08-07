@@ -23,7 +23,9 @@
             "*steamcommunity.com/gift*",
             "*steamcommunity.com/gift/*",
             "*steamcommunjlnty.com/*",
-            "*TikTokNudes_bot*"
+            "*TikTokNudes_bot*",
+            "sc.link*",
+            "envs.sh*"
         ],
         "regex": [
             "\\[.*steamcommunity.*\\]\\(.*\\)",
