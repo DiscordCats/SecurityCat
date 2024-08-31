@@ -17,7 +17,7 @@ export type Modules = {
 
 export const servers = pgTable('servers', {
     id: text('id').primaryKey(),
-    modules: jsonb('modules').$type<Modules[]>().default([]).notNull(),
+    modules: jsonb('modules').array().$type<Modules[]>().notNull(),
 });
 
 // unused
@@ -29,12 +29,12 @@ export const modules = pgTable('modules', {
     log: text('log'),
     duration: text('duration'),
     bypass: jsonb('bypass')
+        .default({ words: [], roles: [], channels: [] })
         .$type<{
             words: string[];
             roles: string[];
             channels: string[];
         }>()
-        .default({ words: [], roles: [], channels: [] })
         .notNull(),
     blockMessageEnabled: boolean('block_message_enabled').notNull(),
 });
