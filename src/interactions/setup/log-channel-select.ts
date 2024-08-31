@@ -12,11 +12,19 @@ import { db } from '../../db';
 import { servers } from '../../schema';
 import { eq } from 'drizzle-orm';
 import { createErrorEmbed } from '../../utils/embeds';
+import {fetchGuildChannel} from "../../utils/discord";
 
 export default {
     custom_id: 'log-channel-select',
     role: 'SELECT_MENU',
     run: async (interaction: AnySelectMenuInteraction) => {
+        if(!interaction.guildId) {
+            const errorEmbed = createErrorEmbed('Guild ID not found.');
+            return interaction.reply({
+                embeds: [errorEmbed],
+                ephemeral: true,
+            });
+        }
         if (!interaction.isChannelSelectMenu()) {
             const errorEmbed = createErrorEmbed('Invalid interaction type.');
             return interaction.reply({
@@ -26,6 +34,14 @@ export default {
         }
 
         const selectedChannelId = interaction.values[0];
+        const selectedChannel = await fetchGuildChannel(interaction.client, interaction.guildId, selectedChannelId)
+        if(!selectedChannel) {
+            const errorEmbed = createErrorEmbed('Channel not found.');
+            return interaction.reply({
+                embeds: [errorEmbed],
+                ephemeral: true,
+            });
+        }
         const serverId = interaction.guild?.id;
 
         if (!serverId) {
@@ -81,7 +97,7 @@ export default {
                                 return {
                                     type: AutoModerationActionType.SendAlertMessage,
                                     metadata: {
-                                        channel: selectedChannelId,
+                                        channel: selectedChannel,
                                     } as AutoModerationActionMetadataOptions,
                                 };
                             }
@@ -92,7 +108,7 @@ export default {
                             newActions.push({
                                 type: AutoModerationActionType.SendAlertMessage,
                                 metadata: {
-                                    channel: selectedChannelId,
+                                    channel: selectedChannel,
                                 } as AutoModerationActionMetadataOptions,
                             });
                         }
