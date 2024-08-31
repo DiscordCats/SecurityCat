@@ -83,7 +83,7 @@ export default async function (client: Client) {
             if (!automodManager) continue;
             for (const module of server.modules) {
                 if (!module.id) continue;
-                const rule = await automodManager.fetch(module.id);
+                const rule = await automodManager.fetch(module.id).catch(() => null);
                 if (!rule) continue;
                 const ruleSet = rules[module.name];
                 if (!ruleSet) continue;
@@ -91,7 +91,7 @@ export default async function (client: Client) {
                     rule.setAllowList(ruleSet.allowed),
                     rule.setKeywordFilter(ruleSet.words),
                     rule.setRegexPatterns(ruleSet.regex),
-                ]);
+                ]).catch(() => null);
             }
         }
     });
