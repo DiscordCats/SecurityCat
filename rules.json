@@ -43,7 +43,8 @@
             "t.me/*",
             "discord.beer/*",
             "t.ly/*",
-            "dus.im/*"
+            "dus.im/*",
+            "matrix.to/*"
         ],
         "regex": [],
         "allowed": []
