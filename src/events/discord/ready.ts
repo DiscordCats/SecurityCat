@@ -75,7 +75,8 @@ export default async function (client: Client) {
                 id: servers.id,
                 modules: servers.modules,
             })
-            .from(servers);
+            .from(servers)
+            .execute();
         for (const server of records) {
             if (!server.modules) continue;
             const guild = await fetchGuild(client, server.id);
