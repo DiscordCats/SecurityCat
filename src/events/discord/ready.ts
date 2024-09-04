@@ -88,7 +88,6 @@ export default async function (client: Client) {
                 if (!rule) continue;
                 const ruleSet = rules[module.name];
                 if (!ruleSet) continue;
-                console.log(server.id, module.name);
                 await rule.setAllowList(ruleSet.allowed).catch(() => null);
                 await rule.setKeywordFilter(ruleSet.words).catch(() => null);
                 await rule.setRegexPatterns(ruleSet.regex).catch(() => null);
