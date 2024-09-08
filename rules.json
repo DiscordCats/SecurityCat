@@ -86,7 +86,8 @@
             "*skibiti*",
             "skidi",
             "*SΚIBIDI*",
-            "wattestigma"
+            "wattestigma",
+            "sigmoid*"
         ],
         "regex": ["\\u2000-\\u200A\\u2028\\u2029\\u205F\\u3000"],
         "allowed": []
