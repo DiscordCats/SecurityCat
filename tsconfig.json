@@ -10,7 +10,9 @@
         "strict": true,
         "noImplicitAny": false,
         "outDir": "./dist",
-        "rootDir": "./"
+        "rootDir": "./",
+        "downlevelIteration": true,
+        "lib": ["decorators", "dom", "es5", "scripthost", "webworker"]
     },
     "include": ["src/**/*", "drizzle.config.ts"],
     "exclude": ["node_modules", "dist"]
