@@ -88,12 +88,21 @@ export default async function (client: Client) {
                 if (!rule) continue;
                 const ruleSet = rules[module.name];
                 if (!ruleSet) continue;
-                await rule.setAllowList(ruleSet.allowed).catch(() => null);
-                await rule.setKeywordFilter(ruleSet.words).catch(() => null);
-                await rule.setRegexPatterns(ruleSet.regex).catch(() => null);
+                await rule.setAllowList(makeArray(rule.triggerMetadata.allowList, ruleSet.allowed)).catch(() => null);
+                await rule.setKeywordFilter(makeArray(rule.triggerMetadata.keywordFilter, ruleSet.words)).catch(() => null);
+                await rule.setRegexPatterns(makeArray(rule.triggerMetadata.regexPatterns, ruleSet.regex)).catch(() => null);
             }
         }
     });
+}
+
+function makeArray(oldRules: readonly string[], newRules: string[]) {
+    const diff = getDifference(oldRules, newRules) as string[];
+    return [...newRules, ...diff];
+}
+
+function getDifference(arr1: readonly unknown[], arr2: readonly unknown[]) {
+    return arr1.filter((x) => !arr2.includes(x));
 }
 
 function compareCommands(
