@@ -8,7 +8,8 @@ import { createRuleViolationEmbed } from '../../utils/embeds';
 export default async function (client: Client) {
     client.on('messageCreate', async (message) => {
         if (!message.guild) return;
-        await handleMessage(client, message as Message<true>);
+        // removed temp until we fix issues
+        // await handleMessage(client, message as Message<true>);
     });
 
     client.on('messageUpdate', async (oldMessage, newMessage) => {
