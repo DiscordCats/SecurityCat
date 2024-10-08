@@ -90,7 +90,7 @@ export default {
         },
         {
             name: 'log-channel',
-            description: 'Set the log channel for a specific module',
+            description: 'Set the log channel for a specific module (select no channel to disable)',
             type: ApplicationCommandOptionType.Subcommand,
             options: [
                 {
@@ -104,7 +104,7 @@ export default {
                     type: ApplicationCommandOptionType.Channel,
                     name: 'channel',
                     description: 'The log channel to set',
-                    required: true,
+                    required: false,
                 },
             ],
         },
@@ -403,14 +403,7 @@ export default {
                 });
             }
         } else if (subcommand === 'log-channel') {
-            const channelId = interaction.options.getChannel('channel')?.id;
-
-            if (!channelId) {
-                return interaction.reply({
-                    embeds: [createErrorEmbed('Channel must be provided.')],
-                    ephemeral: true,
-                });
-            }
+            const channelId = interaction.options.getChannel('channel')?.id || null;
 
             if (!ruleId) {
                 return interaction.reply({
@@ -458,7 +451,7 @@ export default {
                             return {
                                 type: AutoModerationActionType.SendAlertMessage,
                                 metadata: {
-                                    channel: channelId,
+                                    channel: channelId || undefined,
                                 },
                             };
                         }
@@ -469,7 +462,7 @@ export default {
                     newActions.push({
                         type: AutoModerationActionType.SendAlertMessage,
                         metadata: {
-                            channel: channelId,
+                            channel: channelId || undefined,
                         },
                     });
                 }

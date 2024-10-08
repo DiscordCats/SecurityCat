@@ -144,12 +144,12 @@ export function createTimeoutDurationEmbed(
 
 export function createLogChannelSetEmbed(
     moduleName: string,
-    channelId: string,
+    channelId: string | null,
 ): EmbedBuilder {
     return new EmbedBuilder()
         .setTitle('Log Channel Updated')
         .setDescription(
-            `Log channel for module "${moduleName}" has been set to <#${channelId}>.`,
+            `Log channel for module "${moduleName}" has been set to ${channelId ? `<#${channelId}>.` : 'none.'}`,
         )
         .setColor('Green');
 }
