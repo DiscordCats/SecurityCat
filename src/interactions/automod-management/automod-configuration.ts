@@ -467,7 +467,7 @@ export default {
                     });
                 }
 
-                await rule.edit({ actions: newActions });
+                if(channelId) await rule.edit({ actions: newActions });
 
                 return interaction.reply({
                     embeds: [createLogChannelSetEmbed(moduleName, channelId)],
