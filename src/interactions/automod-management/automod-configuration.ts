@@ -441,7 +441,7 @@ export default {
                     .execute();
 
                 let actionUpdated = false;
-                const newActions: AutoModerationActionOptions[] =
+                let newActions: AutoModerationActionOptions[] =
                     rule.actions.map((action) => {
                         if (
                             action.type ===
@@ -467,7 +467,11 @@ export default {
                     });
                 }
 
-                if(channelId) await rule.edit({ actions: newActions });
+                if(!channelId) {
+                    newActions = newActions.filter(action => action.type !== AutoModerationActionType.SendAlertMessage);
+                }
+
+                await rule.edit({ actions: newActions });
 
                 return interaction.reply({
                     embeds: [createLogChannelSetEmbed(moduleName, channelId)],
