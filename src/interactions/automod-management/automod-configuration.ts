@@ -445,24 +445,24 @@ export default {
                     rule.actions.map((action) => {
                         if (
                             action.type ===
-                            AutoModerationActionType.SendAlertMessage
+                            AutoModerationActionType.SendAlertMessage && channelId
                         ) {
                             actionUpdated = true;
                             return {
                                 type: AutoModerationActionType.SendAlertMessage,
                                 metadata: {
-                                    channel: channelId || undefined,
+                                    channel: channelId,
                                 },
                             };
                         }
                         return action;
                     });
 
-                if (!actionUpdated) {
+                if (!actionUpdated && channelId) {
                     newActions.push({
                         type: AutoModerationActionType.SendAlertMessage,
                         metadata: {
-                            channel: channelId || undefined,
+                            channel: channelId,
                         },
                     });
                 }
