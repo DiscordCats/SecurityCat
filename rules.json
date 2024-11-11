@@ -26,7 +26,8 @@
             "*steamcommunjlnty.com/*",
             "*TikTokNudes_bot*",
             "sc.link*",
-            "envs.sh*"
+            "envs.sh*",
+            "*1click-on.eu*"
         ],
         "regex": [
             "\\[.*steamcommunity.*\\]\\(.*\\)",
