@@ -9,33 +9,33 @@
             "*adobe-gratis*",
             "*clck.ru*",
             "*discord.com/freenitro*",
-            "GIFT $*",
             "*https://extercheats.com/*",
             "https://rb.gy/zziey",
             "https://t.me/*",
             "*u.to*",
-            "*mega.nz*",
             "*gofile.io*",
             "*nitro.cheap*",
-            "nudes",
             "*sc.link*",
             "*shorturl.at*",
-            "*steamcommunity.com/card*",
-            "*steamcommunity.com/gift*",
-            "*steamcommunity.com/gift/*",
-            "*steamcommunjlnty.com/*",
             "*TikTokNudes_bot*",
             "sc.link*",
             "envs.sh*",
-            "*1click-on.eu*"
+            "*1click-on.eu*",
+            "*steamcom*",
+            "*steamcon*",
+            "*steancom*",
+            "*stenmcom*",
+            "50$ gift",
+            "$50 gift",
         ],
         "regex": [
             "\\[.*steamcommunity.*\\]\\(.*\\)",
             "\\[.*discord\\.com\\/gift.*\\]\\(.*\\)",
-            "Steam Gift \\d+(?:\\$|£|€)",
-            "(?:\\$|£|€)+\\d gift"
         ],
-        "allowed": []
+        "allowed": [
+            "https://steamcommunity.com/*",
+            "http://steamcommunity.com/*"
+        ]
     },
     "invites": {
         "words": [
