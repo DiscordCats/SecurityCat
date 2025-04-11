@@ -26,11 +26,11 @@
             "*steancom*",
             "*stenmcom*",
             "50$ gift",
-            "$50 gift",
+            "$50 gift"
         ],
         "regex": [
             "\\[.*steamcommunity.*\\]\\(.*\\)",
-            "\\[.*discord\\.com\\/gift.*\\]\\(.*\\)",
+            "\\[.*discord\\.com\\/gift.*\\]\\(.*\\)"
         ],
         "allowed": [
             "https://steamcommunity.com/*",
